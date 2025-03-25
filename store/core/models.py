@@ -2,12 +2,12 @@ from django.db import models
 from django.utils.text import slugify
 import uuid
 
-class Base():
-    name = models.CharField(max_length=300)
+class Base:
     create_date = models.DateField(auto_now_add=True)
     modified_date = models.DateField(auto_now=True)
     uuid = models.UUIDField(unique=True, default=uuid.uuid4) #for security #for default we sent function not value
-
+    deleted = models.BooleanField(default=False)
+    deleted_date = models.DateField(default=None, null=True, blank=True)
 #****************************************************************************************************************************
 class Product(models.Model,Base):
     
@@ -15,9 +15,7 @@ class Product(models.Model,Base):
     # STATUS_DISABLED = 1
     # STATUS_DELETED = 2
     # STATUS_CHOICES = ((STATUS_ENABLED,'Enabled'),(STATUS_DISABLED , 'Disabled') , (STATUS_DELETED , 'Deleted'))
-
-
-    deleted_date = models.DateField(default=None , null=True , blank=True)
+    name = models.CharField(max_length=300)
     price = models.IntegerField(default=0)
     discount = models.FloatField(default=0)
     enabled = models.BooleanField(default=True)
@@ -28,7 +26,7 @@ class Product(models.Model,Base):
     # Slug: what-is-a-slug
     # status = models.IntegerField(max_length=10, choices=STATUS_CHOICES, default=STATUS_ENABLED)
 
-    deleted = models.BooleanField(default=False)
+
     description = models.TextField()
     # category = models.ForeignKey('Category', on_delete=models.PROTECT, related_name='products')
     # old_category = models.ForeignKey('Category',on_delete=models.PROTECT,related_name='old_products')
@@ -38,21 +36,23 @@ class Product(models.Model,Base):
 
 #****************************************************************************************************************************
 class Category(models.Model,Base):
-    pass
+    name = models.CharField(max_length=300)
     #product_set = QuerySet //برای رابطه ی معکوس 
 
 
 #****************************************************************************************************************************
 class Tag(models.Model,Base):
-    pass
+    name = models.CharField(max_length=300)
+
 
 #****************************************************************************************************************************
-class Comment(models.Model):
-    pass
+class Comment(models.Model,Base):
+    name = models.CharField(max_length=300)
+
 
 #****************************************************************************************************************************
-class Like(models.Model):
-    create_date = models.DateField(auto_now_add=True)
+class Like(models.Model,Base):
+    pass
 
     
 #****************************************************************************************************************************
