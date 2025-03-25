@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 import uuid
+from django.contrib.auth.models import User
 
 class Base(models.Model):
     create_date = models.DateField(auto_now_add=True)
@@ -8,6 +9,7 @@ class Base(models.Model):
     uuid = models.UUIDField(unique=True, default=uuid.uuid4) #for security #for default we sent function not value
     deleted = models.BooleanField(default=False)
     deleted_date = models.DateField(default=None, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
     class Meta:
         abstract = True
 #****************************************************************************************************************************
