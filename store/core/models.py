@@ -9,7 +9,7 @@ class Base(models.Model):
     uuid = models.UUIDField(unique=True, default=uuid.uuid4) #for security #for default we sent function not value
     deleted = models.BooleanField(default=False)
     deleted_date = models.DateField(default=None, null=True, blank=True)
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     class Meta:
         abstract = True
 #****************************************************************************************************************************
@@ -33,7 +33,7 @@ class Product(Base):
 
 
     description = models.TextField()
-    category = models.ForeignKey('Category', on_delete=models.PROTECT, related_name='products')
+    category = models.ForeignKey('Category', on_delete=models.CASCADE, related_name='products')
 
 
     # old_category = models.ForeignKey('Category',on_delete=models.PROTECT,related_name='old_products')

@@ -8,4 +8,5 @@ app_name = 'core'
 urlpatterns = [
     path('helloworld/', views.HelloworldView.as_view(),name='hello_world'), #core:hello_world
     path('products/',views.ListProductsView.as_view(),name='products'),
+
 ]
