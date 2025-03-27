@@ -41,7 +41,7 @@ class Product(Base):
     #if we enter argument in '' we can declare class later
 
     def __str__(self):
-        print(self.name)
+        return self.name
 
 #****************************************************************************************************************************
 class Category(Base):
@@ -49,7 +49,7 @@ class Category(Base):
     #product_set = QuerySet //برای رابطه ی معکوس
 
     def __str__(self):
-        print(self.name)
+        return self.name
 
 
 #****************************************************************************************************************************
@@ -57,7 +57,7 @@ class Tag(Base):
     name = models.CharField(max_length=300)
 
     def __str__(self):
-        print(self.name)
+        return self.name
 
 
 #****************************************************************************************************************************
@@ -65,8 +65,7 @@ class Comment(Base):
     name = models.CharField(max_length=300)
 
     def __str__(self):
-        print(self.name)
-
+       return self.name
 
 #****************************************************************************************************************************
 class Like(Base):

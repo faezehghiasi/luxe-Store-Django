@@ -41,7 +41,7 @@
 <body>
     <h1>Product List</h1>
 
-    {% if products %}
+    {% if list_products %}
         <table>
             <thead>
                 <tr>
@@ -50,7 +50,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for product in products %}
+                {% for product in list_products %}
                 <tr>
                     <td>{{ product.name }}</td>
                     <td class="price">${{ product.price|floatformat:2 }}</td>

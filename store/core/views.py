@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.views import View
 
 from core.models import Product
+from . import models
 
 
 class HelloworldView(View):
@@ -13,7 +14,7 @@ class HelloworldView(View):
 class ListProductsView(View):
     def get(self, request):
 
-        list_products = Product.objects.all()
+        list_products =  models.Product.objects.all()
 
         return render(request,'listOfProducts.html',{'list_products':list_products})
 
