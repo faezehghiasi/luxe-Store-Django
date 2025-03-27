@@ -40,24 +40,37 @@ class Product(Base):
     #این اسم هایی که میدیم برای رابطه های معکوس است که جنگو خودش درست میکند اگه اسم بش ندیم دوتا اسم یکسان درست میکنه و ارور میده موقع مایگریت کردن
     #if we enter argument in '' we can declare class later
 
+    def __str__(self):
+        print(self.name)
+
 #****************************************************************************************************************************
 class Category(Base):
     name = models.CharField(max_length=300)
-    #product_set = QuerySet //برای رابطه ی معکوس 
+    #product_set = QuerySet //برای رابطه ی معکوس
+
+    def __str__(self):
+        print(self.name)
 
 
 #****************************************************************************************************************************
 class Tag(Base):
     name = models.CharField(max_length=300)
 
+    def __str__(self):
+        print(self.name)
+
 
 #****************************************************************************************************************************
 class Comment(Base):
     name = models.CharField(max_length=300)
 
+    def __str__(self):
+        print(self.name)
+
 
 #****************************************************************************************************************************
 class Like(Base):
+
     pass
 
     
