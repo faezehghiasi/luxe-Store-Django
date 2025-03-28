@@ -34,7 +34,7 @@ class Product(Base):
 
     description = models.TextField()
     category = models.ForeignKey('Category', on_delete=models.CASCADE, related_name='products')
-
+    image = models.ImageField(upload_to='covers/', null=True, blank=True)
 
     # old_category = models.ForeignKey('Category',on_delete=models.PROTECT,related_name='old_products')
     #این اسم هایی که میدیم برای رابطه های معکوس است که جنگو خودش درست میکند اگه اسم بش ندیم دوتا اسم یکسان درست میکنه و ارور میده موقع مایگریت کردن

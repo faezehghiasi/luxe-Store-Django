@@ -11,16 +11,52 @@
     <script src="{% static 'core/js/holder.min.js' %}"></script>
 
     <style>
-      .product-card img {
-        object-fit: cover;
-        height: 225px;
+      :root {
+        --primary-color: #c19dc3;
+        --primary-dark: #c19dc3;
+;
       }
+
+      .navbar-dark .navbar-brand,
+      .navbar-dark .btn-outline-light {
+        color: var(--primary-color);
+      }
+
       .card-title {
         font-size: 1.1rem;
         font-weight: 600;
       }
+
       .card-text {
         font-size: 0.9rem;
+      }
+
+      .product-image {
+        object-fit: contain;
+        width: 100%;
+        max-height: 225px;
+      }
+
+      .btn-teal {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+      }
+
+      .btn-teal-outline {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+      }
+
+      .btn-teal:hover,
+      .btn-teal-outline:hover {
+        background-color: var(--primary-dark);
+        color: white;
+        border-color: var(--primary-dark);
+      }
+
+      .text-primary {
+        color: var(--primary-color) !important;
       }
     </style>
   </head>
@@ -42,60 +78,42 @@
     </div>
   </nav>
 
-{#  <!-- Hero -->#}
-{#  <section class="py-5 text-center container">#}
-{#    <div class="row py-lg-5">#}
-{#      <div class="col-lg-8 col-md-10 mx-auto">#}
-{#        <h1 class="fw-bold">Welcome to MyStore</h1>#}
-{#        <p class="lead text-muted">Discover the latest and best products across categories. Quality guaranteed, fast delivery, and unbeatable prices.</p>#}
-{#        <a href="#" class="btn btn-primary my-2">Shop Now</a>#}
-{#      </div>#}
-{#    </div>#}
-{#  </section>#}
-
   <!-- Products -->
   <div class="album py-5 bg-body-tertiary">
     <div class="container">
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-
         {% for product in list_products %}
         <div class="col">
           <div class="card shadow-sm product-card">
             {% if product.image %}
-              <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+              <div class="ratio ratio-4x3">
+                <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.name }}">
+              </div>
             {% else %}
               <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail">
-                <rect width="100%" height="100%" fill="#55595c"/>
+                <rect width="100%" height="100%" fill="#55595c"></rect>
                 <text x="50%" y="50%" fill="#eceeef" dy=".3em" text-anchor="middle">No Image</text>
               </svg>
             {% endif %}
             <div class="card-body">
               <h5 class="card-title">{{ product.name }}</h5>
               <p class="card-text text-muted">{{ product.description|truncatewords:15 }}</p>
-              <div class="d-flex justify-content-between align-items-center">
+              <span class="text-primary fw-bold">&dollar;{{ product.price }}</span>
+              <br>
+              <div class="d-flex justify-content-between align-items-center mt-2">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-primary">Add to Cart</button>
-                  <button type="button" class="btn btn-sm btn-primary">Buy Now</button>
+                  <button type="button" class="btn btn-sm btn-teal-outline">Add to Cart</button>
+                  <button type="button" class="btn btn-sm btn-teal">Details</button>
                 </div>
-                <span class="text-primary fw-bold">${{ product.price }}</span>
+                <p class="card-text text-muted mb-0">{{ product.discount }}%</p>
               </div>
             </div>
           </div>
         </div>
         {% endfor %}
-
       </div>
     </div>
   </div>
-{##}
-{#  <!-- Footer -->#}
-{#  <footer class="text-body-secondary py-5">#}
-{#    <div class="container">#}
-{#      <p class="float-end mb-1"><a href="#">Back to top</a></p>#}
-{#      <p class="mb-1">© 2025 MyStore. All rights reserved.</p>#}
-{#      <p class="mb-0">Need help? <a href="#">Contact Support</a></p>#}
-{#    </div>#}
-{#  </footer>#}
-{##}
-{#  </body>#}
-{#</html>#}
+
+  </body>
+</html>
