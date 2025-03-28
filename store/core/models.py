@@ -1,7 +1,8 @@
 from django.db import models
 from django.utils.text import slugify
 import uuid
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from account.models import User
 
 class Base(models.Model):
     create_date = models.DateField(auto_now_add=True)
