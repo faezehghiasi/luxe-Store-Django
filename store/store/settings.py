@@ -129,5 +129,9 @@ MEDIA_URL = '/media/'
 AUTH_USER_MODEL = 'account.User'
 
 
+LOGIN_REDIRECT_URL = '/'
+
+LOGOUT_REDIRECT_URL = '/'
+
 # APPEND_SLASH = True
 # PREPEND_WWW = True

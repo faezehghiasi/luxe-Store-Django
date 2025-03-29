@@ -320,10 +320,13 @@
     {% block header_end %}{% endblock %}
   </head>
 
+
   <body>
     {% block body %}
     <!-- Navigation -->
+    {% block header %}
     {% include 'bits/site_header.html' %}
+    {% endblock %}
 
     <!-- Optional Hero Section - can be overridden or removed in child templates -->
     {% block hero %}
