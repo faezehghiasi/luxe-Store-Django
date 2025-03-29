@@ -1,47 +1,68 @@
 <nav class="navbar navbar-expand-lg navbar-light sticky-top">
-      <div class="container">
+    <div class="container">
+        <!-- Brand logo with gem icon -->
         <a class="navbar-brand" href="/">
-          <i class="fas fa-gem me-2 text-accent"></i>LUXE
+            <i class="fas fa-gem me-2 text-accent"></i>LUXE
         </a>
+
+        <!-- Mobile menu toggle button -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
-          <span class="navbar-toggler-icon"></span>
+            <span class="navbar-toggler-icon"></span>
         </button>
+
+        <!-- Main navigation menu items -->
         <div class="collapse navbar-collapse" id="navbarMain">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="#">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Shop</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown">
-                Categories
-              </a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Electronics</a></li>
-                <li><a class="dropdown-item" href="#">Fashion</a></li>
-                <li><a class="dropdown-item" href="#">Home & Living</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">All Categories</a></li>
-              </ul>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">About</a>
-            </li>
-          </ul>
-          <div class="d-flex">
-            <a href="#" class="btn btn-outline-primary me-2">
-              <i class="fas fa-search"></i>
-            </a>
-            <a href="#" class="btn btn-outline-primary me-2">
-              <i class="fas fa-user"></i>
-            </a>
-            <a href="#" class="btn btn-outline-primary position-relative cart-icon">
-              <i class="fas fa-shopping-bag"></i>
-              <span class="cart-count">3</span>
-            </a>
-          </div>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <!-- Home link -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Home</a>
+                </li>
+
+                <!-- Shop link -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Shop</a>
+                </li>
+
+
+                <!-- About link -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#">About</a>
+                </li>
+            </ul>
+
+            <!-- Right-aligned utility icons -->
+            <div class="d-flex">
+                <!-- Search icon button -->
+                <a href="#" class="btn btn-outline-primary me-2">
+                    <i class="fas fa-search"></i>
+                </a>
+
+                <!-- Conditional Login/User section -->
+                {% if user.is_authenticated %}
+                    <!-- User account icon (shown when logged in) -->
+                    <a href="#" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-user"></i>
+                    </a>
+
+                    <!-- Shopping cart icon -->
+                    <a href="#" class="btn btn-outline-primary me-2 cart-icon">
+                        <i class="fas fa-shopping-bag"></i>
+                    </a>
+
+                    <!-- Logout form -->
+                    <form action="{% url 'logout' %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </form>
+                {% else %}
+                    <!-- Login button (shown when not logged in) -->
+                    <a href="{% url 'login' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                {% endif %}
+            </div>
         </div>
-      </div>
-    </nav>
+    </div>
+</nav>
