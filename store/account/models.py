@@ -15,7 +15,7 @@ def _get_avatar_upload_path(instance, filename):
 
 class User(AbstractUser):
     email = models.EmailField("Email Address")
-    phoneNumber = models.CharField('Phone Number', max_length=15)
+    phone_number = models.CharField('Phone Number', max_length=15)
     address = models.TextField('Address')
     #avatar = models.ImageField(upload_to='avatars/%Y/%m', null=True, blank=True)
     avatar = models.ImageField(upload_to=_get_avatar_upload_path, null=True, blank=True)

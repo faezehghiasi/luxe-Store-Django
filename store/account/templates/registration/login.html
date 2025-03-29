@@ -28,7 +28,7 @@
                 {# Card body containing the actual form #}
                 <div class="card-body p-5">
                     {# Login form - submits data to server #}
-                    <form method="post" class="needs-validation" novalidate>
+                    <form method="post" class="needs-validation" enctype="application/x-www-form-urlencoded">
                         {% csrf_token %}  {# Security token to prevent attacks #}
 
                         {# Shows errors that aren't tied to specific fields #}
@@ -109,7 +109,7 @@
 
                         {# Registration prompt (currently links to contact) #}
                         <div class="text-center small text-muted">
-                            Don't have an account? <a href="#" class="text-accent">Contact administrator</a>
+                            Don't have an account? <a href="{% url 'signup' %}" class="text-accent">create account</a>
                         </div>
                     </form>
                 </div>
