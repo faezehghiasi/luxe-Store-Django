@@ -20,7 +20,7 @@ from django.contrib.auth.forms import UserCreationForm
 class SignUpForm(UserCreationForm):
     class Meta:
         model = models.User
-        exclude = ['is_staff', 'is_superuser', 'is_active', 'date_joined', 'groups', 'user_permissions','last_login','avatar']
+        exclude = ['is_staff', 'is_superuser', 'is_active', 'date_joined', 'groups', 'user_permissions','last_login','avatar','address']
         # fields = ['first_name', 'last_name', 'email','phone_number','password']
         # fields = '__all__'
 
