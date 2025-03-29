@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'phonenumber_field',
     'account',
     'core',
 ]
@@ -133,5 +134,7 @@ LOGIN_REDIRECT_URL = '/'
 
 LOGOUT_REDIRECT_URL = '/'
 
+PHONENUMBER_DB_FORMAT="NATIONAL"
+PHONENUMBER_DEFAULT_REGION ="IRN"
 # APPEND_SLASH = True
 # PREPEND_WWW = True
