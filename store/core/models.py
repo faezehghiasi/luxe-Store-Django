@@ -2,7 +2,10 @@ from django.db import models
 from django.utils.text import slugify
 import uuid
 # from django.contrib.auth.models import User
-from account.models import User
+# from account.models import User #using my user model
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
 
 class Base(models.Model):
     create_date = models.DateField(auto_now_add=True)
