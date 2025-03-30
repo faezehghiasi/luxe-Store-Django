@@ -25,7 +25,9 @@ class SignUpView(View):
     def post(self,request):
         form = forms.SignUpForm(request.POST)
         if form.is_valid():
-            ...
-
+            obj = form.save(commit=False)
+            obj.is_active = False
+            obj.save()
+            return render(request,'account/signup_done.html',{'obj':obj})
         return render(request, 'account/signup.html', {'form': form})
 #*********************************************************************************************************

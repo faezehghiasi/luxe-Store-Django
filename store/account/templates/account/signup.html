@@ -16,7 +16,7 @@
                     </div>
                 </div>
                 <div class="card-body p-5">
-                    <form method="post" enctype="multipart/form-data">
+                    <form method="post" enctype="application/x-www-form-urlencoded">
                         {% csrf_token %}
 
                         {% if form.non_field_errors %}
@@ -164,7 +164,11 @@
                                         {{ error }}
                                     {% endfor %}
                                 </div>
-                            {% endif %}
+                                {% else %}
+                                    <small class="form-text text-muted">
+                                        Minimum 8 characters with letters and numbers
+                                    </small>
+                                {% endif %}
                         </div>
 
                         <!-- Password Confirmation Field -->
