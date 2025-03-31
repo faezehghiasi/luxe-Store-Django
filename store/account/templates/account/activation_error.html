@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Activation Failed | LUXE{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card border-0 shadow-lg text-center">
+                <div class="card-header bg-white py-4">
+                    <div class="text-center">
+                        <i class="fas fa-exclamation-triangle text-danger fa-3x mb-3"></i>
+                        <h2 class="h4 text-uppercase mb-0">Activation Failed</h2>
+                        <p class="text-muted">We couldn't activate your account</p>
+                    </div>
+                </div>
+                <div class="card-body p-5">
+                    <div class="mb-4">
+                        <h3 class="h5 mb-3">Activation Error</h3>
+{#                        <p class="mb-4">#}
+{#                            {% if error %}#}
+{#                                <strong class="text-danger">{{ error }}</strong>#}
+{#                            {% else %}#}
+{#                                The activation link is invalid or has expired.#}
+{#                            {% endif %}#}
+{#                        </p>#}
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            Please request a new activation link below.
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a href="#" class="btn btn-outline-primary">
+                            Resend Activation Email <i class="fas fa-redo ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer bg-white py-3">
+                    <p class="small text-muted mb-0">
+                        Already activated? <a href="{% url 'login' %}" class="text-accent">Try logging in</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    .text-accent {
+        color: var(--primary-color);
+    }
+    .btn-outline-primary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+</style>
+{% endblock %}

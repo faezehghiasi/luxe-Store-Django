@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views import View
-from . import forms
+from . import forms,models
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -9,6 +9,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes,force_str
 from store import settings
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+
+from .models import User
 #*********************************************************************************************************
 # class SignUpView(View):
 #     def get(self,request):
@@ -26,7 +28,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 class TokenGenerator(PasswordResetTokenGenerator):
     def _make_hash_value(self, user, timestamp):
         return str(user.pk) + str(timestamp) + str(user.is_active)
-
+#*********************************************************************************************************
 activation_token_generator = TokenGenerator()
 class SignUpView(View):
     def get(self,request):
@@ -46,10 +48,11 @@ class SignUpView(View):
 
             # Generate activation token and link
             token = activation_token_generator.make_token(user)
-            uid = urlsafe_base64_encode(force_bytes(str(user.pk)))
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            print(f"Original UID: {uid}")  # در SignUpView
             domain = get_current_site(request)
             activation_url = reverse('account:activate', kwargs={'uid': uid, 'token': token})
-            activation_link = f"https://{domain}{activation_url}"
+            activation_link = f"http://{domain}{activation_url}"
 
 
             # Render email content from template
@@ -75,10 +78,31 @@ class SignUpView(View):
                 logger = logging.getLogger(__name__)
                 logger.error(f"Failed to send activation email: {str(e)}")
                 form.add_error(None, "Failed to send activation email. Please try again later.")
+                user.delete()
+
                 return render(request, 'account/signup.html', {'form': form})
 
         # Form is invalid - return with errors
         return render(request, 'account/signup.html', {'form': form})
 #*********************************************************************************************************
 class ActivateView(View):
-    ...
+    def get(self, request, uid, token):
+        try:
+            user_id = force_str(urlsafe_base64_decode(uid))
+            user_id_int = int(user_id)
+        except (TypeError, ValueError, UnicodeDecodeError) as e:
+            return render(request, 'account/activation_error.html', {'error': 'Invalid user ID format'})
+
+        try:
+            user = models.User.objects.get(pk=user_id_int)
+        except models.User.DoesNotExist:
+            return render(request, 'account/activation_error.html', {'error': 'User not found'})
+
+        if activation_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+            return render(request, "account/activation_done.html")
+
+        return render(request, 'account/activation_error.html', {'error': 'Invalid token'})
+
+#*********************************************************************************************************
