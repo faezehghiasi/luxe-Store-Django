@@ -140,3 +140,18 @@ PHONENUMBER_DB_FORMAT = "INTERNATIONAL"  # Format: +989123456789
 
 # APPEND_SLASH = True
 # PREPEND_WWW = True
+
+
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+
+EMAIL_HOST = os.getenv('EMAIL_HOST', '')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 465))
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'True') == 'True'
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', '')

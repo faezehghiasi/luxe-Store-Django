@@ -1,7 +1,14 @@
 from django.shortcuts import render
 from django.views import View
 from . import forms
-
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes,force_str
+from store import settings
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 #*********************************************************************************************************
 # class SignUpView(View):
 #     def get(self,request):
@@ -16,18 +23,62 @@ from . import forms
 #         return render(request, 'account/signup.html', {'form': form})
 
 #*********************************************************************************************************
+class TokenGenerator(PasswordResetTokenGenerator):
+    def _make_hash_value(self, user, timestamp):
+        return str(user.pk) + str(timestamp) + str(user.is_active)
 
+activation_token_generator = TokenGenerator()
 class SignUpView(View):
     def get(self,request):
         form = forms.SignUpForm()
         return render(request,'account/signup.html',{'form':form})
 
-    def post(self,request):
+    def post(self, request):
         form = forms.SignUpForm(request.POST)
         if form.is_valid():
-            obj = form.save(commit=False)
-            obj.is_active = False
-            obj.save()
-            return render(request,'account/signup_done.html',{'obj':obj})
+            # Save user with inactive status
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
+
+            # Prepare verification email
+            mail_subject = 'Activate your LUXE account'
+
+            # Generate activation token and link
+            token = activation_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(str(user.pk)))
+            domain = get_current_site(request)
+            activation_url = reverse('account:activate', kwargs={'uid': uid, 'token': token})
+            activation_link = f"https://{domain}{activation_url}"
+
+
+            # Render email content from template
+            email_body = render_to_string('account/activation_email.html', {
+                'user': user,
+                'activation_link': activation_link,
+            })
+
+            # Create and send email
+            email = EmailMessage(
+                mail_subject,
+                email_body,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[user.email]
+            )
+            email.content_subtype = "html"
+            try:
+                email.send(fail_silently=False)
+                return render(request, 'account/signup_done.html', {'user': user})
+            except Exception as e:
+                # Log the error and show message to user
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f"Failed to send activation email: {str(e)}")
+                form.add_error(None, "Failed to send activation email. Please try again later.")
+                return render(request, 'account/signup.html', {'form': form})
+
+        # Form is invalid - return with errors
         return render(request, 'account/signup.html', {'form': form})
 #*********************************************************************************************************
+class ActivateView(View):
+    ...
