@@ -95,6 +95,8 @@ class ActivateView(View):
 
         try:
             user = models.User.objects.get(pk=user_id_int)
+            if user.is_active:
+                return render(request, 'account/activation_error.html', {'error': 'user is already active'})
         except models.User.DoesNotExist:
             return render(request, 'account/activation_error.html', {'error': 'User not found'})
 
