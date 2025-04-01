@@ -52,7 +52,7 @@ class SignUpView(View):
             print(f"Original UID: {uid}")  # در SignUpView
             domain = get_current_site(request)
             activation_url = reverse('account:activate', kwargs={'uid': uid, 'token': token})
-            activation_link = f"http://{domain}{activation_url}"
+            activation_link = f'https://{domain}{activation_url}'
 
 
             # Render email content from template

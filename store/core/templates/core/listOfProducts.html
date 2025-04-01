@@ -21,8 +21,8 @@
                   <br>
                   <div class="d-flex justify-content-between align-items-center mt-2">
                     <div class="btn-group">
-                      <button type="button" class="btn btn-sm btn-teal-outline">Add to Cart</button>
-                      <button type="button" class="btn btn-sm btn-teal">Details</button>
+                      <a href="{% url 'core:cart_add' product.id %}" class="btn btn-sm btn-teal-outline">Add to Cart</a>
+                      <a href="{% url 'core:cart_show' %}" class="btn btn-sm btn-teal">Details</a>
                     </div>
                     <p class="card-text text-muted mb-0">{{ product.discount }}%</p>
                   </div>
