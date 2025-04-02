@@ -5,6 +5,13 @@ from core.models import Product
 from . import models
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.shortcuts import get_object_or_404
+#*********************************************************************************************************
+def get_cart(request):
+    cart = request.session.get('cart',[])
+    if not cart or not isinstance(cart,list):
+        cart = []
+    return cart
 #*********************************************************************************************************
 class ListOfProductsView(View):
     def get(self, request):
@@ -17,10 +24,11 @@ class ListOfProductsView(View):
 #*********************************************************************************************************
 class AddToCartView(View):
     def get(self, request,product_id):
-        if not request.session.get('cart'):
-            request.session['cart'] = []
-        request.session['cart'] = request.session['cart'].append(product_id)
-        return HttpResponseRedirect(reverse('core:listOfProducts'))
+        product = get_object_or_404(Product,id=product_id)
+        cart = get_cart(request)
+        cart.append(product_id)
+        request.session['cart'] = cart
+        return HttpResponseRedirect(reverse('core:products_list'))
 
 
 #*********************************************************************************************************
