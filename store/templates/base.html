@@ -37,6 +37,7 @@
         --text-dark: #333333; /* Dark gray for text */
         --text-muted: #6c757d;
         --success-color: #28a745;
+        --danger-color: #dc3545;
       }
 
       body {
@@ -111,6 +112,7 @@
         transition: all 0.3s ease;
         margin-bottom: 25px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        position: relative;
       }
 
       .product-card:hover {
@@ -151,6 +153,17 @@
         font-weight: 600;
       }
 
+      .stock-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: white;
+      }
+      
       .product-title {
         font-family: 'Montserrat', sans-serif;
         font-weight: 600;
@@ -170,6 +183,17 @@
         color: var(--text-muted);
         font-size: 0.9rem;
         margin-left: 8px;
+      }
+
+      .product-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+      }
+
+      .product-actions .btn {
+        flex: 1;
+        margin: 0 5px;
       }
 
       /* Buttons */
@@ -208,6 +232,13 @@
       .btn-accent:hover {
         background-color: #d9b26e;
         color: var(--text-dark);
+      }
+
+      .btn-disabled {
+        background-color: #e9ecef;
+        color: #6c757d;
+        cursor: not-allowed;
+        opacity: 0.65;
       }
 
       /* Hero section */
@@ -315,6 +346,15 @@
         .navbar-brand {
           font-size: 1.5rem;
         }
+
+        .product-actions {
+          flex-direction: column;
+        }
+
+        .product-actions .btn {
+          margin: 5px 0;
+          width: 100%;
+        }
       }
     </style>
     {% block header_end %}{% endblock %}
@@ -343,7 +383,7 @@
     <div class="main-content">
       <div class="container">
         {% block content %}
-            {% endblock %}
+        {% endblock %}
       </div>
     </div>
     {% endblock %}

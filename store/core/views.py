@@ -19,13 +19,18 @@ def get_cart(request):
 #*********************************************************************************************************
 def add_to_cart(cart, product):
     if product.quantity > 0 and product.enabled :
-        cart[product.id] = cart.get(product.id,0) + 1
+        cart[str(product.id)] = cart.get(str(product.id),0) + 1
 
 #*********************************************************************************************************
 def remove_from_cart(cart, product_id):
-   if product_id in cart:
-       del cart[product_id]
+    if str(product_id) in cart:
+        if cart[str(product_id)] > 1:
+            cart[str(product_id)] = cart[str(product_id)] - 1
+        else:
+            del cart[str(product_id)]
+
 #*********************************************************************************************************
+
 def get_cart_total_price(cart):
    total = 0
    products = models.Product.objects.filter(id__in=list(cart.keys()))
@@ -44,7 +49,7 @@ class ListOfProductsView(View):
 
 #*********************************************************************************************************
 class AddToCartView(View):
-    def get(self, request,product_id):
+    def get(self, request, product_id):
         product = get_object_or_404(Product,id=product_id)
         cart = get_cart(request)
         add_to_cart(cart,product)

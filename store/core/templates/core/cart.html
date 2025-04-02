@@ -5,118 +5,215 @@
 {% block content %}
 <div class="container py-5">
     <div class="row">
-        <div class="col-lg-12">
-            <h1 class="section-title">Your Shopping Cart</h1>
+        <div class="col-12">
+            <!-- Cart Header Section -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h2 mb-0">Your Shopping Cart</h1>
+                <a href="{% url 'core:products_list' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                </a>
+            </div>
 
+            <!-- Empty Cart State -->
             {% if not cart %}
-                <div class="text-center py-5">
-                    <i class="fas fa-shopping-cart fa-4x text-muted mb-4"></i>
-                    <h3 class="mb-3">Your cart is empty</h3>
-                    <p class="text-muted mb-4">Start shopping to add items to your cart</p>
-                    <a href="{% url 'core:products_list' %}" class="btn btn-primary">Continue Shopping</a>
-                </div>
+            <div class="text-center py-5 bg-light rounded-3">
+                <i class="fas fa-shopping-cart fa-4x text-muted mb-4"></i>
+                <h3 class="mb-3">Your cart is empty</h3>
+                <p class="text-muted mb-4">Discover our collection and find something special</p>
+                <a href="{% url 'core:products_list' %}" class="btn btn-primary px-4">
+                    <i class="fas fa-gem me-2"></i>Start Shopping
+                </a>
+            </div>
             {% else %}
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead class="bg-light">
-                            <tr>
-                                <th scope="col" class="border-0">Product</th>
-                                <th scope="col" class="border-0">Price</th>
-                                <th scope="col" class="border-0">Quantity</th>
-                                <th scope="col" class="border-0">Total</th>
-                                <th scope="col" class="border-0"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for product_id, item in cart.items %}
-                            <tr>
-                                <td class="border-0 align-middle">
-                                    <div class="d-flex align-items-center">
-                                        <img src="{{ item.obj.image.url }}" alt="{{ item.obj.name }}" class="img-fluid rounded" style="width: 80px;">
-                                        <div class="ms-3">
-                                            <h6 class="mb-1">{{ item.obj.name }}</h6>
-                                            <p class="text-muted mb-0">{{ item.obj.category }}</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="border-0 align-middle">
-                                    {% if item.obj.discount > 0 %}
-                                        <span class="text-primary">${{ item.obj.price|floatformat:2 }}</span>
-                                        <small class="text-muted"><del>${{ item.obj.original_price|floatformat:2 }}</del></small>
-                                    {% else %}
-                                        <span class="text-primary">${{ item.obj.price|floatformat:2 }}</span>
-                                    {% endif %}
-                                </td>
-                                <td class="border-0 align-middle">
-                                    <div class="d-flex align-items-center">
-                                        <form method="post" action="{% url 'core:update_cart' product_id %}" class="d-flex">
-                                            {% csrf_token %}
-                                            <input type="number" name="count" value="{{ item.count }}" min="1" class="form-control form-control-sm" style="width: 70px;">
-                                            <button type="submit" class="btn btn-sm btn-outline-primary ms-2">
-                                                <i class="fas fa-sync-alt"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                                <td class="border-0 align-middle">${{ item.price|floatformat:2 }}</td>
-                                <td class="border-0 align-middle">
-                                    <form method="post" action="{% url 'core:remove_from_cart' product_id %}">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+            <!-- Cart with Items -->
+            <div class="row">
+                <!-- Cart Items Table -->
+                <div class="col-lg-8">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th scope="col" class="ps-3" style="width: 40%;">Item</th>
+                                            <th scope="col" class="text-center">Price</th>
+                                            <th scope="col" class="text-center">Qty</th>
+                                            <th scope="col" class="text-center">Total</th>
+                                            <th scope="col" class="pe-3"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for product_id, item in cart.items %}
+                                        <tr>
+                                            <!-- Product Image and Name -->
+                                            <td class="ps-3 py-3">
+                                                <div class="d-flex align-items-center">
+                                                    <img src="{{ item.obj.image.url }}" alt="{{ item.obj.name }}"
+                                                         class="img-fluid rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                                    <div>
+                                                        <h6 class="mb-1">{{ item.obj.name }}</h6>
+                                                        <small class="text-muted">{{ item.obj.category }}</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <!-- Price with Discount Display -->
+                                            <td class="text-center align-middle">
+                                                {% if item.obj.discount > 0 %}
+                                                <div>
+                                                    <span class="text-dark fw-bold d-block">${{ item.obj.price|floatformat:2 }}</span>
+                                                    <small class="text-muted"><del>{{ item.obj.original_price|floatformat:2 }}</del></small>
+                                                    <div class="badge bg-success mt-1">OFF</div>
+                                                </div>
+                                                {% else %}
+                                                    <span class="text-dark fw-bold">${{ item.obj.price|floatformat:2 }}</span>
+                                                {% endif %}
+                                            </td>
+
+                                            <!-- Quantity Display -->
+                                            <td class="text-center align-middle">
+                                                <span class="fw-bold">{{ item.count }}</span>
+                                            </td>
+
+                                            <!-- Line Total -->
+                                            <td class="text-center align-middle fw-bold">
+                                                ${{ item.price|floatformat:2 }}
+                                            </td>
+
+                                            <!-- Remove Item Button -->
+                                            <td class="text-center align-middle pe-3">
+                                                <a href="{% url 'core:cart_remove' product_id %}">
+                                                    <button type="button" class="btn btn-sm btn-link text-danger">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </a>
+                                            </td>
+
+`
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="row mt-4">
-                    <div class="col-lg-6">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title mb-4">Have a coupon?</h5>
-                                <form>
-                                    <div class="input-group mb-3">
-                                        <input type="text" class="form-control" placeholder="Coupon code">
-                                        <button class="btn btn-accent" type="button">Apply</button>
+                <!-- Order Summary Section -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Order Summary</h5>
+
+                            <!-- Summary List -->
+                            <ul class="list-group list-group-flush mb-4">
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-2">
+                                    <span>Subtotal</span>
+                                    <span>${{ total_price|floatformat:2 }}</span>
+                                </li>
+
+                                <!-- Discount Display (if any) -->
+                                {% if total_discount > 0 %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-2">
+                                    <span class="text-success">Discount</span>
+                                    <span class="text-success">-${{ total_discount|floatformat:2 }}</span>
+                                </li>
+                                {% endif %}
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                    <span>Shipping</span>
+                                    <span class="text-success">Free</span>
+                                </li>
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pt-2 mb-3">
+                                    <div>
+                                        <strong>Total</strong>
                                     </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title mb-4">Order Summary</h5>
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                                        Subtotal
-                                        <span>${{ total_price|floatformat:2 }}</span>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
-                                        Shipping
-                                        <span>Free</span>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
-                                        <div>
-                                            <strong>Total</strong>
-                                        </div>
-                                        <span><strong>${{ total_price|floatformat:2 }}</strong></span>
-                                    </li>
-                                </ul>
-                                <div class="d-grid gap-2">
-                                    <a href="{% url 'core:checkout' %}" class="btn btn-primary btn-lg">Proceed to Checkout</a>
-                                    <a href="{% url 'core:products_list' %}" class="btn btn-outline-primary">Continue Shopping</a>
-                                </div>
+                                    <span><strong>${{ total_price|floatformat:2 }}</strong></span>
+                                </li>
+                            </ul>
+
+                            <!-- Checkout Button -->
+                            <div class="d-grid">
+                                <a href="{% url 'core:checkout' %}" class="btn btn-primary btn-lg mb-3">
+                                    <i class="fas fa-lock me-2"></i>Checkout
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
             {% endif %}
         </div>
     </div>
 </div>
+
+<!-- Custom CSS for cart page -->
+<style>
+    :root {
+        --primary-color: #2a5a78; /* Sophisticated navy blue */
+    }
+
+    /* Button and Links Adjustments */
+    .btn-outline-primary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+        color: white;
+        background-color: var(--primary-color);
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+
+    /* Table styling */
+    .table {
+        width: 100%;
+    }
+
+    .table td, .table th {
+        padding: 1rem 0.5rem;
+        vertical-align: middle;
+    }
+
+    /* Product column width */
+    .table th:first-child,
+    .table td:first-child {
+        padding-left: 1rem;
+    }
+
+    /* Remove button styling */
+    .btn-link.text-danger {
+        padding: 0;
+        color: #dc3545 !important;
+    }
+
+    .btn-link.text-danger:hover {
+        color: #bb2d3b !important;
+    }
+
+    /* Discount badge */
+    .badge.bg-success {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.4rem;
+        background-color: #198754 !important;
+    }
+
+    /* Hover effect */
+    .table-hover tbody tr:hover {
+        background-color: rgba(25, 135, 84, 0.05);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .table td, .table th {
+            padding: 0.75rem 0.25rem;
+        }
+    }
+</style>
 {% endblock %}
