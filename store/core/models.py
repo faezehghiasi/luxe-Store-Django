@@ -28,7 +28,8 @@ class Product(Base):
     price = models.IntegerField(default=0)
     discount = models.FloatField(default=0)
     enabled = models.BooleanField(default=True)
-    slug = models.SlugField() 
+    slug = models.SlugField()
+    quantity = models.IntegerField(default=0)
     # In web development and content management, a slug is the part of a URL that identifies a specific page or post on a website in a human-readable format. It usually comes after the domain name and helps users and search engines understand the content of the page.
     # Example:
     # URL: https://example.com/blog/what-is-a-slug
