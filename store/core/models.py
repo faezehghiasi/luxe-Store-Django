@@ -77,6 +77,41 @@ class Like(Base):
 
     pass
 
-    
 #****************************************************************************************************************************
+class InvoiceItem(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    invoice = models.ForeignKey('Invoice', on_delete=models.CASCADE)
+    count = models.IntegerField(default=0)
+    price = models.IntegerField(default=0)
+    discount = models.FloatField(default=0)
+    name = models.CharField(max_length=300)
+    total_price = models.IntegerField(default=0)
+
+#****************************************************************************************************************************
+class Invoice(models.Model):
+    date = models.DateField(auto_now_add=True)
+    number = models.IntegerField(null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    total = models.IntegerField(default=0)
+    discount = models.FloatField(default=0)
+    description = models.TextField()
+    address = models.TextField()
+    vat = models.FloatField(default=0.09)
+
+
+#****************************************************************************************************************************
+class Payment(models.Model):
+     STATUS_PENDING = 'pending'
+     STATUS_DONE = 'done'
+     STATUS_ERROR = 'error'
+
+     STATUS_CHOICES = ((STATUS_PENDING, 'Pending'),(STATUS_DONE, 'Done'),(STATUS_ERROR, 'Error'),(STATUS_DONE, 'done'))
+     invoice = models.OneToOneField(Invoice, on_delete=models.PROTECT)
+     total = models.IntegerField(default=0)
+     ref_number = models.CharField(max_length=300)
+     authorization_code = models.CharField(max_length=300)
+     description = models.TextField()
+     user_id = models.CharField(max_length=300)
+     status = models.CharField(choices=STATUS_CHOICES, max_length=20)
+
 
