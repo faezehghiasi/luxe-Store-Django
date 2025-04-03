@@ -3,7 +3,7 @@ from os import remove
 from urllib import request
 
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views import View
 from core.models import Product
 from . import models
@@ -24,10 +24,7 @@ def add_to_cart(cart, product):
 #*********************************************************************************************************
 def remove_from_cart(cart, product_id):
     if str(product_id) in cart:
-        if cart[str(product_id)] > 1:
-            cart[str(product_id)] = cart[str(product_id)] - 1
-        else:
-            del cart[str(product_id)]
+        del cart[str(product_id)]
 
 #*********************************************************************************************************
 
@@ -50,10 +47,13 @@ class ListOfProductsView(View):
 #*********************************************************************************************************
 class AddToCartView(View):
     def get(self, request, product_id):
-        product = get_object_or_404(Product,id=product_id)
+        product = get_object_or_404(Product, id=product_id)
         cart = get_cart(request)
-        add_to_cart(cart,product)
+        add_to_cart(cart, product)
         request.session['cart'] = cart
+
+        if request.headers.get('X-Requested-With', '').lower() == 'xmlhttprequest':
+            return JsonResponse(cart)
         return HttpResponseRedirect(reverse('core:products_list'))
 
 
@@ -63,12 +63,20 @@ class RemoveFromView(View):
         cart = get_cart(request)
         remove_from_cart(cart, product_id)
         request.session['cart'] = cart
+
+        if request.headers.get('X-Requested-With', '').lower() == 'xmlhttprequest':
+            return JsonResponse({
+                'cart' : cart,
+                'total_price' : get_cart_total_price(cart)
+            })
         return HttpResponseRedirect(reverse('core:products_list'))
 
 #*********************************************************************************************************
 class EmptyCartView(View):
     def get(self, request):
         request.session['cart'] = {}
+        if request.headers.get('X-Requested-With', '').lower() == 'xmlhttprequest':
+            return JsonResponse({})
         return HttpResponseRedirect(reverse('core:products_list'))
 
 #*********************************************************************************************************

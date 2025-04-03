@@ -1,12 +1,59 @@
 {% extends "base.html" %}
-
+{% load static %}
+<!-- Sets the page title in the browser tab -->
 {% block title %}Your Shopping Cart | Luxury Store{% endblock %}
 
+<!-- Navigation bar block -->
+{% block header %}
+  <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+        <!-- Brand logo with gem icon -->
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-gem me-2 text-accent"></i>LUXE
+        </a>
+        <!-- Mobile menu toggle button -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- Main navigation menu -->
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+            </ul>
+            <!-- Right side navigation items -->
+            <div class="d-flex">
+                <!-- Search button -->
+                <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-search"></i></a>
+                <!-- Conditional rendering based on authentication status -->
+                {% if user.is_authenticated %}
+                    <!-- User profile button -->
+                    <a href="#" class="btn btn-outline-primary me-2"><i class="fas fa-user"></i></a>
+                    <!-- Logout form -->
+                    <form action="{% url 'logout' %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </form>
+                {% else %}
+                    <!-- Login button -->
+                    <a href="{% url 'login' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+<!-- Main content block -->
 {% block content %}
 <div class="container py-5">
     <div class="row">
         <div class="col-12">
-            <!-- Cart Header Section -->
+            <!-- Cart header section with title and continue shopping button -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1 class="h2 mb-0">Your Shopping Cart</h1>
                 <a href="{% url 'core:products_list' %}" class="btn btn-outline-primary">
@@ -14,9 +61,9 @@
                 </a>
             </div>
 
-            <!-- Empty Cart State -->
+            <!-- Empty cart message (shown when cart is empty) -->
             {% if not cart %}
-            <div class="text-center py-5 bg-light rounded-3">
+            <div class="text-center py-5 bg-light rounded-3" id="empty-cart-message">
                 <i class="fas fa-shopping-cart fa-4x text-muted mb-4"></i>
                 <h3 class="mb-3">Your cart is empty</h3>
                 <p class="text-muted mb-4">Discover our collection and find something special</p>
@@ -24,10 +71,11 @@
                     <i class="fas fa-gem me-2"></i>Start Shopping
                 </a>
             </div>
+
+            <!-- Cart with items (shown when cart has products) -->
             {% else %}
-            <!-- Cart with Items -->
             <div class="row">
-                <!-- Cart Items Table -->
+                <!-- Left column - Cart items table -->
                 <div class="col-lg-8">
                     <div class="card shadow-sm mb-4">
                         <div class="card-body p-0">
@@ -42,10 +90,11 @@
                                             <th scope="col" class="pe-3"></th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="cart-items">
+                                        <!-- Loop through each item in the cart -->
                                         {% for product_id, item in cart.items %}
-                                        <tr>
-                                            <!-- Product Image and Name -->
+                                        <tr id="cart-item-{{ product_id }}">
+                                            <!-- Product image and name -->
                                             <td class="ps-3 py-3">
                                                 <div class="d-flex align-items-center">
                                                     <img src="{{ item.obj.image.url }}" alt="{{ item.obj.name }}"
@@ -56,40 +105,24 @@
                                                     </div>
                                                 </div>
                                             </td>
-
-                                            <!-- Price with Discount Display -->
+                                            <!-- Product price -->
                                             <td class="text-center align-middle">
-                                                {% if item.obj.discount > 0 %}
-                                                <div>
-                                                    <span class="text-dark fw-bold d-block">${{ item.obj.price|floatformat:2 }}</span>
-                                                    <small class="text-muted"><del>{{ item.obj.original_price|floatformat:2 }}</del></small>
-                                                    <div class="badge bg-success mt-1">OFF</div>
-                                                </div>
-                                                {% else %}
-                                                    <span class="text-dark fw-bold">${{ item.obj.price|floatformat:2 }}</span>
-                                                {% endif %}
+                                                <span class="text-dark fw-bold">${{ item.obj.price|floatformat:2 }}</span>
                                             </td>
-
-                                            <!-- Quantity Display -->
+                                            <!-- Product quantity -->
                                             <td class="text-center align-middle">
                                                 <span class="fw-bold">{{ item.count }}</span>
                                             </td>
-
-                                            <!-- Line Total -->
+                                            <!-- Total price for this product (price * quantity) -->
                                             <td class="text-center align-middle fw-bold">
                                                 ${{ item.price|floatformat:2 }}
                                             </td>
-
-                                            <!-- Remove Item Button -->
+                                            <!-- Remove item button -->
                                             <td class="text-center align-middle pe-3">
-                                                <a href="{% url 'core:cart_remove' product_id %}">
-                                                    <button type="button" class="btn btn-sm btn-link text-danger">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </a>
+                                                <button type="button" class="btn btn-sm btn-link text-danger cart-remove" data-id="{{ product_id }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
                                             </td>
-
-`
                                         </tr>
                                         {% endfor %}
                                     </tbody>
@@ -99,44 +132,23 @@
                     </div>
                 </div>
 
-                <!-- Order Summary Section -->
+                <!-- Right column - Order summary -->
                 <div class="col-lg-4">
                     <div class="card shadow-sm border-0">
                         <div class="card-body">
                             <h5 class="card-title mb-4">Order Summary</h5>
-
-                            <!-- Summary List -->
+                            <hr>
                             <ul class="list-group list-group-flush mb-4">
+                                <!-- Subtotal display -->
                                 <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-2">
                                     <span>Subtotal</span>
-                                    <span>${{ total_price|floatformat:2 }}</span>
-                                </li>
-
-                                <!-- Discount Display (if any) -->
-                                {% if total_discount > 0 %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-2">
-                                    <span class="text-success">Discount</span>
-                                    <span class="text-success">-${{ total_discount|floatformat:2 }}</span>
-                                </li>
-                                {% endif %}
-
-                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
-                                    <span>Shipping</span>
-                                    <span class="text-success">Free</span>
-                                </li>
-
-                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pt-2 mb-3">
-                                    <div>
-                                        <strong>Total</strong>
-                                    </div>
-                                    <span><strong>${{ total_price|floatformat:2 }}</strong></span>
+                                    <span class="order-total text-dark fw-bold">${{ total_price|floatformat:2 }}</span>
                                 </li>
                             </ul>
-
-                            <!-- Checkout Button -->
+                            <!-- Checkout button -->
                             <div class="d-grid">
                                 <a href="{% url 'core:checkout' %}" class="btn btn-primary btn-lg mb-3">
-                                    <i class="fas fa-lock me-2"></i>Checkout
+                                    <i class="fas fa-lock me-2"></i> Proceed to Checkout
                                 </a>
                             </div>
                         </div>
@@ -148,72 +160,35 @@
     </div>
 </div>
 
-<!-- Custom CSS for cart page -->
-<style>
-    :root {
-        --primary-color: #2a5a78; /* Sophisticated navy blue */
-    }
+<!-- JavaScript for handling cart item removal -->
+<script type="text/javascript">
+$(document).ready(function() {
+    // Event handler for remove item buttons
+    $('.cart-remove').click(function(e) {
+        e.preventDefault();
+        var button = $(this);
+        var productId = button.data('id');
+        // Construct URL with product ID
+        var targetUrl = `{% url 'core:cart_remove' 0 %}`.replace('0', productId);
 
-    /* Button and Links Adjustments */
-    .btn-outline-primary {
-        color: var(--primary-color);
-        border-color: var(--primary-color);
-    }
+        // AJAX request to remove item
+        $.get(targetUrl, function(res) {
+            // If item was removed from cart
+            if (res.cart[productId] === undefined) {
+                // Fade out and remove the item row
+                $(`#cart-item-${productId}`).fadeOut(300, function() {
+                    $(this).remove();
+                    // If cart is now empty, show empty cart message
+                    if (Object.keys(res.cart).length === 0) {
+                        $('#empty-cart-message').show();
+                    }
+                });
+            }
+            // Update total price display
+            $('.order-total').text(`$${res.total_price.toFixed(2)}`);
+        });
+    });
+});
+</script>
 
-    .btn-outline-primary:hover {
-        color: white;
-        background-color: var(--primary-color);
-    }
-
-    .btn-primary {
-        background-color: var(--primary-color);
-        border-color: var(--primary-color);
-    }
-
-
-    /* Table styling */
-    .table {
-        width: 100%;
-    }
-
-    .table td, .table th {
-        padding: 1rem 0.5rem;
-        vertical-align: middle;
-    }
-
-    /* Product column width */
-    .table th:first-child,
-    .table td:first-child {
-        padding-left: 1rem;
-    }
-
-    /* Remove button styling */
-    .btn-link.text-danger {
-        padding: 0;
-        color: #dc3545 !important;
-    }
-
-    .btn-link.text-danger:hover {
-        color: #bb2d3b !important;
-    }
-
-    /* Discount badge */
-    .badge.bg-success {
-        font-size: 0.7rem;
-        padding: 0.2rem 0.4rem;
-        background-color: #198754 !important;
-    }
-
-    /* Hover effect */
-    .table-hover tbody tr:hover {
-        background-color: rgba(25, 135, 84, 0.05);
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .table td, .table th {
-            padding: 0.75rem 0.25rem;
-        }
-    }
-</style>
 {% endblock %}

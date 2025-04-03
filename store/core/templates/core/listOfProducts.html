@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
         {% for product in list_products %}
@@ -50,7 +51,7 @@
                     <!-- Action buttons -->
                     <div class="product-actions mt-auto">
                         {% if product.quantity > 0 %}
-                            <a href="{% url 'core:cart_add' product.id %}" class="btn btn-primary btn-sm">
+                            <a href="{% url 'core:cart_add' product.id %}" data-id="{{ product.id }}" class="btn btn-primary btn-sm add_to_cart_link">
                                 <i class="fas fa-shopping-cart me-1"></i> Add to Cart
                             </a>
                         {% else %}
@@ -67,8 +68,26 @@
             </div>
         </div>
         {% endfor %}
-    </div>
 
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('.add_to_cart_link').click(function(e) {
+                    e.preventDefault();
+                    var target_link = $(this).attr('href');
+
+                    $.get(target_link, function(res, status, xhr) {
+
+                            var item_count = Object.keys(res).length;
+                            $('#cart_count').html(item_count);
+
+                    });
+
+                    return false;
+                });
+            });
+        </script>
+
+    </div>
     <style>
         .out-of-stock {
             background-color: #dc3545 !important;
