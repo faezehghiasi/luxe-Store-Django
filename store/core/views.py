@@ -1,8 +1,8 @@
 from itertools import product
 from os import remove
 from urllib import request
-
-from django.shortcuts import render
+from . import forms
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.views import View
 from core.models import Product
@@ -10,6 +10,12 @@ from . import models
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
+import json
+import requests
+from django.contrib.sites.shortcuts import get_current_site
+
+
+mid = '3b69051a-9a58-4bfe-bca0-b14110818af2'
 #*********************************************************************************************************
 def get_cart(request):
     cart = request.session.get('cart',{})
@@ -27,7 +33,6 @@ def remove_from_cart(cart, product_id):
         del cart[str(product_id)]
 
 #*********************************************************************************************************
-
 def get_cart_total_price(cart):
    total = 0
    products = models.Product.objects.filter(id__in=list(cart.keys()))
@@ -96,6 +101,77 @@ class ShowCartView(View):
 
 #*********************************************************************************************************
 class CheckoutView(View):
-    pass
+    def get(self, request):
+        form = forms.InvoiceForm()
+        return render(request,'core/checkout.html',{'form':form})
+
+    def post(self, request):
+        form = forms.InvoiceForm(request.POST)
+        if form.is_valid():
+            #create Payment
+            invoice = form.save(commit=False)
+            invoice.user = request.user
+            cart = get_cart(request)
+            invoice.total_before_discount_in_invoice = get_cart_total_price(cart)
+            invoice.save()
+            item_objects = []
+            items = models.Product.objects.filter(id__in=list(cart.keys()))
+            for product_id, product_count in cart.items():
+                obj = items.get(id=product_id)
+                invoice_item_obj = models.InvoiceItem()
+                invoice_item_obj.product = obj
+                invoice_item_obj.invoice = invoice
+                invoice_item_obj.count = product_count
+                invoice_item_obj.price = obj.price
+                invoice_item_obj.discount = obj.discount
+                invoice_item_obj.name = obj.name
+                invoice_item_obj.total_price_count = invoice_item_obj.total_price_count * invoice_item_obj.count
+                invoice_item_obj.total_price_count-= invoice_item_obj.total_price_count * invoice_item_obj.discount
+                item_objects.append(invoice_item_obj)
+            models.InvoiceItem.objects.bulk_create(item_objects)
+            payment = models.Payment()
+
+            payment.invoice = invoice
+            payment.total_price = invoice.total_before_discount_in_in_invoice - invoice.total_before_discount_in_in_invoice * invoice.discount
+            payment.total_price += payment.total_price * invoice.vat
+            payment.user_ip = get_user_ip(request)
+            payment.description = 'سایت لوکس مورد اعتماد شما'
+
+            callback_url = 'https://' + get_current_site(request) + reverse('core:verify')
+
+            data = {
+                "merchant_id": mid,
+                "amount": payment.total_price,
+                "callback_url": callback_url,
+                "description": payment.description,
+                "metadata": {
+                    "mobile": invoice.uesr.phone_number,
+                    "email": invoice.user.email,
+                }
+            }
+
+            url = 'https://sandbox.zarinpal.com/pg/v4/payment/request.json'
+            headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+            response = requests.post(url, data=json.dumps(data), headers=headers)
+            response_data = response.json()
+
+            if response_data.get('data', {}).get('code') == 100:
+                authority = response_data['data']['authority']
+                return redirect(f"https://sandbox.zarinpal.com/pg/StartPay/{authority}")
+            else:
+                return JsonResponse({"error": "Transaction failed"}, status=400)
+        return render(request,'core/checkout.html',{'form':form})
 
 #*********************************************************************************************************
+def get_user_ip(request):
+    ip = request.META.get('HTTP_X_FORWARDED_FOR ')
+    if not ip:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+#*********************************************************************************************************
+class VerifyView(View):
+    ...

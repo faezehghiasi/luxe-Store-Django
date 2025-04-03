@@ -85,16 +85,17 @@ class InvoiceItem(models.Model):
     price = models.IntegerField(default=0)
     discount = models.FloatField(default=0)
     name = models.CharField(max_length=300)
-    total_price = models.IntegerField(default=0)
+    total_price_count = models.IntegerField(default=0)
 
 #****************************************************************************************************************************
 class Invoice(models.Model):
     date = models.DateField(auto_now_add=True)
+
     number = models.IntegerField(null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
-    total = models.IntegerField(default=0)
+    total_before_discount_in_invoice = models.IntegerField(default=0)
     discount = models.FloatField(default=0)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
     address = models.TextField()
     vat = models.FloatField(default=0.09)
 
@@ -107,11 +108,13 @@ class Payment(models.Model):
 
      STATUS_CHOICES = ((STATUS_PENDING, 'Pending'),(STATUS_DONE, 'Done'),(STATUS_ERROR, 'Error'),(STATUS_DONE, 'done'))
      invoice = models.OneToOneField(Invoice, on_delete=models.PROTECT)
-     total = models.IntegerField(default=0)
-     ref_number = models.CharField(max_length=300)
+     total_price = models.IntegerField(default=0)
+     ref_number = models.CharField(max_length=300, null=True, blank=True)
      authorization_code = models.CharField(max_length=300)
      description = models.TextField()
-     user_id = models.CharField(max_length=300)
-     status = models.CharField(choices=STATUS_CHOICES, max_length=20)
+     user_ip = models.CharField(max_length=300)
+     status = models.CharField(choices=STATUS_CHOICES, max_length=20,default=STATUS_PENDING)
+
+#****************************************************************************************************************************
 
 
