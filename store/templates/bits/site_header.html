@@ -42,11 +42,11 @@
                 <!-- Shopping cart icon with badge -->
                 <a href="{% url 'core:cart_show' %}" class="btn btn-outline-primary me-2 cart-icon position-relative">
                     <i class="fas fa-shopping-bag"></i>
-                    {% if request.session.cart|length > 0 %}
+
                         <span id="cart_count"  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                             {{request.session.cart|length}}
                         </span>
-                    {% endif %}
+
                 </a>
 
 

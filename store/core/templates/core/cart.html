@@ -145,12 +145,34 @@
                                     <span class="order-total text-dark fw-bold">${{ total_price|floatformat:2 }}</span>
                                 </li>
                             </ul>
-                            <!-- Checkout button -->
-                            <div class="d-grid">
-                                <a href="{% url 'core:checkout' %}" class="btn btn-primary btn-lg mb-3">
-                                    <i class="fas fa-lock me-2"></i> Proceed to Checkout
-                                </a>
-                            </div>
+
+                            <!-- Checkout button with authentication check -->
+                            {% if user.is_authenticated %}
+                                <!-- Active checkout button for logged in users -->
+                                <div class="d-grid">
+                                    <a href="{% url 'core:checkout' %}" class="btn btn-primary btn-lg mb-3">
+                                        <i class="fas fa-lock me-2"></i> Proceed to Checkout
+                                    </a>
+                                </div>
+                            {% else %}
+                                <!-- Disabled checkout button with tooltip for non-logged in users -->
+                                <div class="d-grid">
+                                    <button class="btn btn-primary btn-lg mb-3" disabled
+                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                            title="Please login to proceed to checkout">
+                                        <i class="fas fa-lock me-2"></i> Proceed to Checkout
+                                    </button>
+                                    <p class="text-center text-danger small mt-2">
+                                        <i class="fas fa-exclamation-circle me-1"></i>
+                                        You must be logged in to checkout
+                                    </p>
+                                    <div class="d-grid mt-2">
+                                        <a href="{% url 'login' %}?next={% url 'core:cart_show' %}" class="btn btn-outline-primary">
+                                            <i class="fas fa-sign-in-alt me-2"></i>Login Now
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -160,9 +182,12 @@
     </div>
 </div>
 
-<!-- JavaScript for handling cart item removal -->
+<!-- JavaScript for handling cart item removal and tooltips -->
 <script type="text/javascript">
 $(document).ready(function() {
+    // Initialize tooltips
+    $('[data-bs-toggle="tooltip"]').tooltip();
+
     // Event handler for remove item buttons
     $('.cart-remove').click(function(e) {
         e.preventDefault();

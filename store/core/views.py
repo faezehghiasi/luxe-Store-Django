@@ -15,7 +15,7 @@ import requests
 from django.contrib.sites.shortcuts import get_current_site
 
 
-mid = '3b69051a-9a58-4bfe-bca0-b14110818af2'
+mid = '40120a7a-b6e4-44cb-b9c5-2755e1cb3dab'
 #*********************************************************************************************************
 def get_cart(request):
     cart = request.session.get('cart',{})
@@ -102,18 +102,22 @@ class ShowCartView(View):
 #*********************************************************************************************************
 class CheckoutView(View):
     def get(self, request):
+
         form = forms.InvoiceForm()
-        return render(request,'core/checkout.html',{'form':form})
+        return render(request, 'core/checkout.html', {'form': form})
 
     def post(self, request):
         form = forms.InvoiceForm(request.POST)
+        print(request.POST)
         if form.is_valid():
-            #create Payment
+            # Create the invoice
             invoice = form.save(commit=False)
             invoice.user = request.user
             cart = get_cart(request)
             invoice.total_before_discount_in_invoice = get_cart_total_price(cart)
             invoice.save()
+
+            # Create invoice items
             item_objects = []
             items = models.Product.objects.filter(id__in=list(cart.keys()))
             for product_id, product_count in cart.items():
@@ -125,19 +129,23 @@ class CheckoutView(View):
                 invoice_item_obj.price = obj.price
                 invoice_item_obj.discount = obj.discount
                 invoice_item_obj.name = obj.name
-                invoice_item_obj.total_price_count = invoice_item_obj.total_price_count * invoice_item_obj.count
-                invoice_item_obj.total_price_count-= invoice_item_obj.total_price_count * invoice_item_obj.discount
+                invoice_item_obj.total_price_count = obj.price * product_count
+                invoice_item_obj.total_price_count -= invoice_item_obj.total_price_count * obj.discount
                 item_objects.append(invoice_item_obj)
             models.InvoiceItem.objects.bulk_create(item_objects)
-            payment = models.Payment()
 
+            # Create payment
+            payment = models.Payment()
             payment.invoice = invoice
-            payment.total_price = invoice.total_before_discount_in_in_invoice - invoice.total_before_discount_in_in_invoice * invoice.discount
+            payment.total_price = invoice.total_before_discount_in_invoice - invoice.total_before_discount_in_invoice * invoice.discount
             payment.total_price += payment.total_price * invoice.vat
+            payment.total_price = int(payment.total_price)
             payment.user_ip = get_user_ip(request)
             payment.description = 'سایت لوکس مورد اعتماد شما'
 
-            callback_url = 'https://' + get_current_site(request) + reverse('core:verify')
+            # Callback URL
+            callback_url = f"https://{get_current_site(request)}{reverse('core:verify')}"
+
 
             data = {
                 "merchant_id": mid,
@@ -145,7 +153,7 @@ class CheckoutView(View):
                 "callback_url": callback_url,
                 "description": payment.description,
                 "metadata": {
-                    "mobile": invoice.uesr.phone_number,
+                    "mobile": invoice.user.phone_number,
                     "email": invoice.user.email,
                 }
             }
@@ -162,8 +170,12 @@ class CheckoutView(View):
                 authority = response_data['data']['authority']
                 return redirect(f"https://sandbox.zarinpal.com/pg/StartPay/{authority}")
             else:
-                return JsonResponse({"error": "Transaction failed"}, status=400)
-        return render(request,'core/checkout.html',{'form':form})
+                error_message = response_data.get('data', {}).get('message', 'Unknown error occurred')
+                print(response_data)
+                return render(request, 'core/checkout_error.html', {'error_message': error_message})
+
+        return render(request, 'core/checkout.html', {'form': form})
+
 
 #*********************************************************************************************************
 def get_user_ip(request):
