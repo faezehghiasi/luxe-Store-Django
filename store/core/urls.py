@@ -15,5 +15,5 @@ urlpatterns = [
     path('checkout', views.CheckoutView.as_view(), name='checkout'),
 
     path('verify', views.VerifyView.as_view(), name='verify'),
-
+    path('api/products', views.ProductListApiView.as_view(), name='api_product'),
 ]

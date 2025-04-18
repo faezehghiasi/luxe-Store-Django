@@ -14,7 +14,9 @@ import json
 import requests
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from . import serializers
 
 mid = '40120a7a-b6e4-44cb-b9c5-2755e1cb3dab'
 #*********************************************************************************************************
@@ -255,4 +257,9 @@ class VerifyView(LoginRequiredMixin,View):
             return render(request, 'core/payment_failed.html')
 
 
-
+#*********************************************************************************************************
+class ProductListApiView(APIView):
+    def get(self, request,format=None):
+        products = models.Product.objects.all()
+        serializer = serializers.ProductListSerializer(products, many=True)
+        return Response(serializer.data)
