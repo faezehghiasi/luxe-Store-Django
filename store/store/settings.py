@@ -134,6 +134,8 @@ LOGIN_REDIRECT_URL = '/'
 
 LOGOUT_REDIRECT_URL = '/'
 
+LOGIN_URL = '/account/login/'
+
 # Phone number settings
 PHONENUMBER_DEFAULT_REGION = "IR"  # Default country (Iran)
 PHONENUMBER_DB_FORMAT = "INTERNATIONAL"  # Format: +989123456789

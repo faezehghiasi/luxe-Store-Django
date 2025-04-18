@@ -26,7 +26,7 @@
               <hr>
               <div class="row">
                 <div class="col-md-6">
-                  <p class="mb-2"><strong>Invoice Number:</strong> {{ payment.invoice.count }}</p>
+                  <p class="mb-2"><strong>Invoice Number:</strong> {{ payment.invoice.number }}</p>
                   <p class="mb-2"><strong>Reference Number:</strong> {{ payment.ref_id|default:"N/A" }}</p>
                   <p class="mb-2"><strong>Total Paid:</strong> ${{ payment.total_price|floatformat:2 }}</p>
                 </div>

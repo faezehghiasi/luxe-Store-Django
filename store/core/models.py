@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.utils.text import slugify
 import uuid
@@ -49,13 +51,31 @@ class Comment(Base):
 
 # ****************************************************************************************************************************
 class Invoice(models.Model):
+
     date = models.DateField(auto_now_add=True)
-    number = models.IntegerField(null=True, blank=True)
+    number = models.CharField(max_length=100,null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     address = models.ForeignKey('Address', on_delete=models.PROTECT, related_name='invoices')  # flexible relation
     total_before_discount_in_invoice = models.IntegerField(default=0)
     description = models.TextField(null=True, blank=True)
     vat = models.FloatField(default=0.09)
+
+    def save(self, *args, **kwargs):
+        if not self.number:
+            # Generate invoice number on first save
+            year_month = datetime.now().strftime('%Y%m')
+            last_invoice = Invoice.objects.filter(
+                number__startswith=f'INV{year_month}'
+            ).order_by('-number').first()
+
+            if last_invoice:
+                last_seq = int(last_invoice.number[-5:])
+                new_seq = last_seq + 1
+            else:
+                new_seq = 1
+
+            self.number = f'INV{year_month}{new_seq:05d}'
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Invoice #{self.number or 'N/A'} - {self.user.username}"
@@ -70,6 +90,10 @@ class InvoiceItem(models.Model):
     name = models.CharField(max_length=300)
     total_price_count = models.IntegerField(default=0)
 
+    def __str__(self):
+        return f"{self.invoice.number} - {self.product.name}"
+
+
 # ****************************************************************************************************************************
 class Payment(models.Model):
     STATUS_PENDING = 'pending'
@@ -81,7 +105,7 @@ class Payment(models.Model):
         (STATUS_DONE, 'Done'),
         (STATUS_ERROR, 'Error'),
     )
-
+    date = models.DateField(auto_now_add=True)
     invoice = models.OneToOneField(Invoice, on_delete=models.PROTECT)
     total_price = models.IntegerField(default=0)
     ref_number = models.CharField(max_length=300, null=True, blank=True)# کد رهگیری تراکنش
@@ -91,7 +115,7 @@ class Payment(models.Model):
     status = models.CharField(choices=STATUS_CHOICES, max_length=20, default=STATUS_PENDING)
 
     def __str__(self):
-        return f"Payment for Invoice #{self.invoice.number or 'N/A'}"
+        return f"Payment for Invoice #{self.invoice.number or 'N/A'}, User : {self.invoice.user.username}"
 
 # ****************************************************************************************************************************
 class Address(models.Model):

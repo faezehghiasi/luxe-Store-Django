@@ -202,7 +202,7 @@ def get_user_ip(request):
     return ip
 
 #*********************************************************************************************************
-class VerifyView(View):
+class VerifyView(LoginRequiredMixin,View):
     def get(self, request):
         status = request.GET.get('Status')
         authority = request.GET.get('Authority')
