@@ -13,6 +13,7 @@ from django.shortcuts import get_object_or_404
 import json
 import requests
 from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 mid = '40120a7a-b6e4-44cb-b9c5-2755e1cb3dab'
@@ -100,7 +101,8 @@ class ShowCartView(View):
         return render(request,'core/cart.html',{'cart':cart_objects , 'total_price':get_cart_total_price(cart)})
 
 #*********************************************************************************************************
-class CheckoutView(View):
+class CheckoutView(LoginRequiredMixin,View):
+
     def get(self, request):
         form = forms.InvoiceForm()
         return render(request, 'core/checkout.html', {'form': form })
