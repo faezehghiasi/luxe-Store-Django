@@ -149,6 +149,7 @@ class CheckoutView(View):
                 item_objects.append(invoice_item)
             models.InvoiceItem.objects.bulk_create(item_objects)
 
+            request.session['cart'] = {}
 
             payment = models.Payment()
             payment.invoice = invoice
@@ -157,7 +158,6 @@ class CheckoutView(View):
             payment.total_price = int(payment.total_price)
             payment.user_ip = get_user_ip(request)
             payment.description = "Your trusted luxury site"
-            payment.save()
 
 
             callback_url = f"http://{get_current_site(request)}{reverse('core:verify')}"
@@ -182,6 +182,8 @@ class CheckoutView(View):
 
             if response_data.get('data', {}).get('code') == 100:
                 authority = response_data['data']['authority']
+                payment.authorization_code = authority
+                payment.save()
                 return redirect(f"https://sandbox.zarinpal.com/pg/StartPay/{authority}")
             else:
                 error_message = response_data.get('errors', {}).get('message', 'Unknown error occurred')
@@ -205,7 +207,7 @@ class VerifyView(View):
         if status != 'OK':
             return render(request, 'core/payment_failed.html')
         try:
-            payment = models.Payment.objects.get(models.Payment, authority=authority , status=models.Payment.STATUS_PENDING)
+            payment = models.Payment.objects.get(authorization_code=authority , status=models.Payment.STATUS_PENDING)
             amount = payment.total_price
             data = {
                 "merchant_id": mid,
@@ -232,7 +234,7 @@ class VerifyView(View):
                     payment.ref_id = ref_id
                     payment.status = models.Payment.STATUS_DONE
                     payment.save()
-                    return render(request, 'core/payment_done.html')
+                    return render(request, 'core/payment_done.html',{'payment': payment})
                 elif code == 101:
                     logger.error(f"Failed to pey payment: {json.load(response_data)}")
                     return render(request, 'core/payment_failed.html')

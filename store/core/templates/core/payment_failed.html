@@ -1,10 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block hero %}
+<div class="hero-section" style="background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');">
+  <div class="container">
+    <h1 class="hero-title text-shadow">Payment Failed</h1>
+    <p class="hero-subtitle text-shadow">We couldn't process your payment. Please try again or contact support.</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+      <div class="card border-danger mb-5">
+        <div class="card-body p-5">
+          <div class="mb-4">
+            <i class="fas fa-times-circle fa-5x text-danger mb-4"></i>
+            <h2 class="card-title">Payment Unsuccessful</h2>
+            <p class="card-text mt-3">Your payment could not be processed. This could be due to insufficient funds, incorrect payment details, or other issues.</p>
+          </div>
+          
+          <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'core:cart_show' %}" class="btn btn-primary">
+              <i class="fas fa-arrow-left me-2"></i> Back to Cart
+            </a>
+            <a href="{% url 'core:products_list' %}" class="btn btn-outline-primary">
+              <i class="fas fa-shopping-bag me-2"></i> Continue Shopping
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
