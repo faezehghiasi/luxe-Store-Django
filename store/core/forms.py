@@ -4,4 +4,5 @@ from . import models
 class InvoiceForm(forms.ModelForm):
     class Meta:
         model = models.Invoice
-        fields = ['address']
+        fields = ['description']
+

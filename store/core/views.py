@@ -102,51 +102,65 @@ class ShowCartView(View):
 #*********************************************************************************************************
 class CheckoutView(View):
     def get(self, request):
-
         form = forms.InvoiceForm()
-        return render(request, 'core/checkout.html', {'form': form})
+        return render(request, 'core/checkout.html', {'form': form })
 
     def post(self, request):
         form = forms.InvoiceForm(request.POST)
-        print(request.POST)
         if form.is_valid():
-            # Create the invoice
+
+            address_data = {
+                'user': request.user,
+                'street': request.POST.get('street', ''),
+                'city': request.POST.get('city', ''),
+                'postal_code': request.POST.get('postal_code', ''),
+                'country': request.POST.get('country', ''),
+            }
+
+            address, created = models.Address.objects.update_or_create(
+                user=request.user,
+                defaults=address_data
+            )
+
+
             invoice = form.save(commit=False)
             invoice.user = request.user
+            invoice.address = address
             cart = get_cart(request)
             invoice.total_before_discount_in_invoice = get_cart_total_price(cart)
             invoice.save()
 
-            # Create invoice items
             item_objects = []
             items = models.Product.objects.filter(id__in=list(cart.keys()))
             for product_id, product_count in cart.items():
                 obj = items.get(id=product_id)
-                invoice_item_obj = models.InvoiceItem()
-                invoice_item_obj.product = obj
-                invoice_item_obj.invoice = invoice
-                invoice_item_obj.count = product_count
-                invoice_item_obj.price = obj.price
-                invoice_item_obj.discount = obj.discount
-                invoice_item_obj.name = obj.name
-                invoice_item_obj.total_price_count = obj.price * product_count
-                invoice_item_obj.total_price_count -= invoice_item_obj.total_price_count * obj.discount
-                item_objects.append(invoice_item_obj)
+                total_price = obj.price * product_count
+                total_price -= total_price * obj.discount
+
+                invoice_item = models.InvoiceItem(
+                    product=obj,
+                    invoice=invoice,
+                    count=product_count,
+                    price=obj.price,
+                    discount=obj.discount,
+                    name=obj.name,
+                    total_price_count=total_price
+                )
+                item_objects.append(invoice_item)
             models.InvoiceItem.objects.bulk_create(item_objects)
 
-            # Create payment
+
             payment = models.Payment()
             payment.invoice = invoice
-            payment.total_price = invoice.total_before_discount_in_invoice - invoice.total_before_discount_in_invoice * invoice.discount
+            payment.total_price = invoice.total_before_discount_in_invoice
             payment.total_price += payment.total_price * invoice.vat
             payment.total_price = int(payment.total_price)
             payment.user_ip = get_user_ip(request)
-            payment.description = 'سایت لوکس مورد اعتماد شما'
-
-            # Callback URL
-            callback_url = f"https://{get_current_site(request)}{reverse('core:verify')}"
+            payment.description = "Your trusted luxury site"
+            payment.save()
 
 
+            callback_url = f"http://{get_current_site(request)}{reverse('core:verify')}"
             data = {
                 "merchant_id": mid,
                 "amount": payment.total_price,
@@ -170,8 +184,7 @@ class CheckoutView(View):
                 authority = response_data['data']['authority']
                 return redirect(f"https://sandbox.zarinpal.com/pg/StartPay/{authority}")
             else:
-                error_message = response_data.get('data', {}).get('message', 'Unknown error occurred')
-                print(response_data)
+                error_message = response_data.get('errors', {}).get('message', 'Unknown error occurred')
                 return render(request, 'core/checkout_error.html', {'error_message': error_message})
 
         return render(request, 'core/checkout.html', {'form': form})
@@ -186,4 +199,56 @@ def get_user_ip(request):
 
 #*********************************************************************************************************
 class VerifyView(View):
-    ...
+    def get(self, request):
+        status = request.GET.get('Status')
+        authority = request.GET.get('Authority')
+        if status != 'OK':
+            return render(request, 'core/payment_failed.html')
+        try:
+            payment = models.Payment.objects.get(models.Payment, authority=authority , status=models.Payment.STATUS_PENDING)
+            amount = payment.total_price
+            data = {
+                "merchant_id": mid,
+                "amount": amount,
+                "authority": authority
+            }
+
+            headers = {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+            url = 'https://sandbox.zarinpal.com/pg/v4/payment/verify.json'
+
+            response = requests.post(url, data=json.dumps(data), headers=headers)
+            response_data = response.json()
+            import logging
+            logger = logging.getLogger(__name__)
+
+
+            if response.status_code == 200:
+                code = response_data.get('data', {}).get('code')
+                if code == 100:
+                    ref_id = str(response_data['data']['ref_id'])
+                    payment.ref_id = ref_id
+                    payment.status = models.Payment.STATUS_DONE
+                    payment.save()
+                    return render(request, 'core/payment_done.html')
+                elif code == 101:
+                    logger.error(f"Failed to pey payment: {json.load(response_data)}")
+                    return render(request, 'core/payment_failed.html')
+                else:
+                    logger.error(f"Failed to pey payment: {json.load(response_data)}")
+                    payment.status = models.Payment.STATUS_ERROR
+                    payment.save()
+                    return render(request, 'core/payment_failed.html')
+            else:
+                logger.error(f"Failed to pey payment: {json.load(response_data)}")
+                payment.status = models.Payment.STATUS_ERROR
+                payment.save()
+                return render(request, 'core/payment_failed.html')
+
+        except models.Payment.DoesNotExist:
+            return render(request, 'core/payment_failed.html')
+
+
+

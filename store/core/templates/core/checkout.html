@@ -1,173 +1,99 @@
 {% extends "base.html" %}
 {% block title %}Checkout | Luxury Store{% endblock %}
 
-{% block header %}
-    {% include 'bits/site_header.html' %}
-{% endblock %}
-
 {% block content %}
 <div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow border-0">
-                <div class="card-header bg-white border-0 py-4">
-                    <h3 class="mb-0 text-center fw-bold"><i class="fas fa-truck me-2 text-primary"></i>Complete Your Purchase</h3>
-                </div>
-                <div class="card-body p-4 p-md-5">
-                    <form method="post" action="{% url 'core:checkout' %}" class="needs-validation" novalidate>
-                        {% csrf_token %}
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <form method="post" action="{% url 'core:checkout' %}" class="card p-4 shadow needs-validation" novalidate>
+        {% csrf_token %}
 
-                        <!-- Delivery Address Section -->
-                        <div class="mb-4">
-                            <h5 class="fw-semibold mb-3 text-dark"><i class="fas fa-map-marker-alt me-2 text-primary"></i>Delivery Address</h5>
-                            <div class="form-floating">
-                                <textarea class="form-control custom-textarea" id="id_address" name="address" style="height: 120px" placeholder="Enter your full address" required>{{ form.address.value|default:'' }}</textarea>
-                                <label for="id_address">Full shipping address</label>
-                            </div>
-                            <small class="text-muted mt-2 d-block">Please include street address, apartment/suite, city, postal code, country and phone number.</small>
-                            {% if form.address.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.address.errors }}
-                                </div>
-                            {% endif %}
-                        </div>
+        <h3 class="fw-bold mb-4 text-center">Complete Your Purchase</h3>
 
-                        <!-- Payment Method Section -->
-                        <div class="mb-4">
-                            <h5 class="fw-semibold mb-3 text-dark"><i class="fas fa-credit-card me-2 text-primary"></i>Payment Method</h5>
-                            <div class="card bg-light border-0 p-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="paymentMethod" id="zarinpal" checked>
-                                    <label class="form-check-label fw-semibold d-flex align-items-center" for="zarinpal">
-                                        <span>ZarinPal Secure Payment</span>
-                                    </label>
-                                    <div class="form-text mt-1">All transactions are encrypted and secure</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="d-grid mt-5">
-                            <button type="submit" class="btn btn-primary btn-lg py-3 fw-bold">
-                                <i class="fas fa-lock me-2"></i> Complete Secure Checkout
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+        <!-- Street -->
+        <div class="mb-3">
+          <label for="street" class="form-label">Street Address</label>
+          <input type="text" class="form-control" name="street" id="street" required>
+          <div class="invalid-feedback">Please provide your street address.</div>
         </div>
+
+        <!-- City -->
+        <div class="mb-3">
+          <label for="city" class="form-label">City</label>
+          <input type="text" class="form-control" name="city" id="city" required>
+          <div class="invalid-feedback">Please provide your city.</div>
+        </div>
+
+        <!-- State -->
+        <div class="mb-3">
+          <label for="state" class="form-label">State</label>
+          <input type="text" class="form-control" name="state" id="state">
+        </div>
+
+        <!-- Postal Code -->
+        <div class="mb-3">
+          <label for="postal_code" class="form-label">Postal Code</label>
+          <input type="text" class="form-control" name="postal_code" id="postal_code" required>
+          <div class="invalid-feedback">Please provide your postal code.</div>
+        </div>
+
+        <!-- Country -->
+        <div class="mb-3">
+          <label for="country" class="form-label">Country</label>
+          <input type="text" class="form-control" name="country" id="country" value="Iran" required>
+          <div class="invalid-feedback">Please provide your country.</div>
+        </div>
+
+        <!-- Description (Optional) -->
+        <div class="mb-3">
+          <label for="description" class="form-label">Order Notes (Optional)</label>
+          <textarea class="form-control" name="description" id="description" rows="3"></textarea>
+        </div>
+
+        <!-- Submit -->
+        <div class="d-grid mt-4">
+          <button type="submit" class="btn btn-primary btn-lg fw-bold">
+            <i class="fas fa-lock me-2"></i> Continue to Payment
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
 </div>
-{% endblock %}
 
-{% block styles %}
-<style>
-    .card {
-        border-radius: 16px;
-        overflow: hidden;
-        border: none;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.querySelector('.needs-validation');
+
+  form.addEventListener('submit', function (event) {
+    let isValid = true;
+
+    const requiredInputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+    requiredInputs.forEach(function (input) {
+      if (!input.value.trim()) {
+        input.classList.add('is-invalid');
+        input.classList.remove('is-valid');
+        isValid = false;
+      } else {
+        input.classList.remove('is-invalid');
+        input.classList.add('is-valid');
+      }
+    });
+
+    if (!isValid) {
+      event.preventDefault();
+      event.stopPropagation();
+      form.classList.add('was-validated');
+      const firstInvalid = form.querySelector('.is-invalid');
+      if (firstInvalid) {
+        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        firstInvalid.focus();
+      }
     }
-
-    .form-control, .form-select {
-        padding: 1rem 1rem;
-        border-radius: 12px;
-        border: 1px solid #e0e0e0;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-    }
-
-    .custom-textarea {
-        padding-top: 2rem !important;
-        font-size: 16px;
-        line-height: 1.6;
-        resize: vertical;
-    }
-
-    .form-control:focus, .form-select:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
-    }
-
-    .form-floating>label {
-        padding: 1rem 1.25rem;
-        color: #6c757d;
-        transition: all 0.3s ease;
-    }
-
-    .form-floating>.form-control:focus~label,
-    .form-floating>.form-control:not(:placeholder-shown)~label,
-    .form-floating>.form-select~label {
-        color: #0d6efd;
-        transform: scale(0.85) translateY(-1rem) translateX(0.15rem);
-    }
-
-    .btn-primary {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-        border-radius: 12px;
-        font-weight: 600;
-        padding: 12px 24px;
-        transition: all 0.3s ease;
-    }
-
-    .btn-primary:hover {
-        background-color: #0b5ed7;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 15px rgba(13, 110, 253, 0.2);
-    }
-
-    .was-validated .form-control:invalid,
-    .form-control.is-invalid {
-        border-color: #dc3545;
-        background-image: none;
-    }
-
-    .was-validated .form-control:invalid:focus,
-    .form-control.is-invalid:focus {
-        border-color: #dc3545;
-        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
-    }
-
-    .card-header {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .text-primary {
-        color: #0d6efd !important;
-    }
-
-    .form-check-input:checked {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-    }
-
-    small.text-muted {
-        font-size: 0.85rem;
-        opacity: 0.8;
-    }
-</style>
-{% endblock %}
-
-{% block scripts %}
-<script>
-// Client-side form validation
-(function () {
-    'use strict'
-
-    var forms = document.querySelectorAll('.needs-validation')
-
-    Array.prototype.slice.call(forms)
-        .forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-
-                form.classList.add('was-validated')
-            }, false)
-        })
-})()
+  });
+});
 </script>
 {% endblock %}
+
+
+
