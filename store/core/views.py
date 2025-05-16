@@ -16,6 +16,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
 from . import serializers
 
 mid = '40120a7a-b6e4-44cb-b9c5-2755e1cb3dab'
@@ -263,3 +264,27 @@ class ProductListApiView(APIView):
         products = models.Product.objects.all()
         serializer = serializers.ProductListSerializer(products, many=True)
         return Response(serializer.data)
+
+
+#*********************************************************************************************************
+class GetCartAPIView(APIView):
+    def get(self, request,format=None):
+        cart = get_cart(request)
+        s = serializers.CartSerializer(data=cart)
+        return Response(s.data)
+#*********************************************************************************************************
+class AddToCartAPIView(View):
+    def post(self, request):
+        serializer = serializers.AddToCartSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                product_id = serializer.data['product_id']
+                product = get_object_or_404(Product, id=product_id)
+                cart = get_cart(request)
+                add_to_cart(cart, product)
+                request.session['cart'] = cart
+                return JsonResponse(cart)
+            except models.Product.DoesNotExist:
+                return Response({'error':'product not found'},status.HTTP_404_NOT_FOUND)
+        return Response({'error':'bad request'},status.HTTP_400_BAD_REQUEST)
+
