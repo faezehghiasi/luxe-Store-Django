@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'account',
     'core',
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+
 ]
 
 MIDDLEWARE = [
@@ -160,3 +163,19 @@ EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'True') == 'True'
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', '')
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+
+from datetime import timedelta
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True
+}
+
+REST_FRAMEWORK = {
+
+    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework.authentication.TokenAuthentication',
+                                       'rest_framework_simplejwt.authentication.JWTAuthentication'],
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
+}

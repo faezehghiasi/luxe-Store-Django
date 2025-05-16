@@ -161,7 +161,7 @@ class CheckoutView(LoginRequiredMixin,View):
             payment.total_price += payment.total_price * invoice.vat
             payment.total_price = int(payment.total_price)
             payment.user_ip = get_user_ip(request)
-            payment.description = "Your trusted luxury site"
+            payment.description = "payment"
 
 
             callback_url = f"http://{get_current_site(request)}{reverse('core:verify')}"

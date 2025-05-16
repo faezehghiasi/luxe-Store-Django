@@ -30,13 +30,7 @@
                   <p class="mb-2"><strong>Reference Number:</strong> {{ payment.ref_id|default:"N/A" }}</p>
                   <p class="mb-2"><strong>Total Paid:</strong> ${{ payment.total_price|floatformat:2 }}</p>
                 </div>
-                <div class="col-md-6">
 
-              {% if payment.description %}
-              <hr>
-              <p class="mb-0"><strong>Description:</strong> {{ payment.description }}</p>
-              {% endif %}
-            </div>
             {% endif %}
           </div>
           
