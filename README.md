@@ -92,6 +92,7 @@ Users must verify their email before logging in. Make sure you have a working em
 ![Screenshot from 2025-05-14 16-54-10](https://github.com/user-attachments/assets/232b2168-d3f6-4d3a-8597-6edfe9c43910)
 ![Screenshot from 2025-05-14 16-54-21](https://github.com/user-attachments/assets/a5a66437-2176-497c-b9e2-b3f8a6cb57f8)
 ![Screenshot from 2025-05-14 16-58-13](https://github.com/user-attachments/assets/34da2270-bbeb-44cc-8a29-3c62358dcdf3)
+
 ## 👤 Author
 
 - Faezeh Ghiasi – [GitHub](https://github.com/faezehghiasi)
