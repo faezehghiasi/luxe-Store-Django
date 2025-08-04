@@ -18,13 +18,15 @@ class ProductListSerializer(serializers.ModelSerializer):
 class CartSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     count = serializers.IntegerField()
-    def __init__(self,data={},*args,**kwargs):
-        d =[]
+    
+    def __init__(self, data={}, *args, **kwargs):
+        d = []
         for id, count in data.items():
-            d.append({'id':id,'count':count})
-
-        kwargs.pop('many')
-        super(CartSerializer,self).__init__(data=d,many=True,*args,**kwargs)
+            d.append({'id': id, 'count': count})
+        
+        # Remove 'many' from kwargs if it exists
+        kwargs.pop('many', None)
+        super(CartSerializer, self).__init__(data=d, many=True, *args, **kwargs)
 
 
     # def to_representation(self, cart_item):

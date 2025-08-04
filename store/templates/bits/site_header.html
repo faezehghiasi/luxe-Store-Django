@@ -1,3 +1,4 @@
+{% load i18n %}
 <nav class="navbar navbar-expand-lg navbar-light sticky-top">
     <div class="container">
         <!-- Brand logo with gem icon -->
@@ -15,23 +16,54 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <!-- Home link -->
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Home</a>
+                    <a class="nav-link" href="#">{% trans "Home" %}</a>
                 </li>
 
                 <!-- Shop link -->
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'core:cart_show' %}">Shop</a>
+                    <a class="nav-link" href="{% url 'core:cart_show' %}">{% trans "Shop" %}</a>
                 </li>
 
 
                 <!-- About link -->
                 <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
+                    <a class="nav-link" href="#">{% trans "About" %}</a>
                 </li>
             </ul>
 
             <!-- Right-aligned utility icons -->
             <div class="d-flex">
+                <!-- Language switcher -->
+                <div class="dropdown me-2">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% if LANGUAGE_CODE == 'fa' %}
+                            <i class="fas fa-flag"></i> فارسی
+                        {% else %}
+                            <i class="fas fa-flag"></i> English
+                        {% endif %}
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                        <li>
+                            <form method="post" action="{% url 'core:language_switch' %}" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="language" value="en">
+                                <button type="submit" class="dropdown-item">
+                                    <i class="fas fa-flag"></i> English
+                                </button>
+                            </form>
+                        </li>
+                        <li>
+                            <form method="post" action="{% url 'core:language_switch' %}" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="language" value="fa">
+                                <button type="submit" class="dropdown-item">
+                                    <i class="fas fa-flag"></i> فارسی
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+                
                 <!-- Search icon button -->
                 <a href="#" class="btn btn-outline-primary me-2">
                     <i class="fas fa-search"></i>
@@ -67,7 +99,7 @@
                 {% else %}
                     <!-- Login button (shown when not logged in) -->
                     <a href="{% url 'login' %}" class="btn btn-outline-primary">
-                        <i class="fas fa-sign-in-alt"></i> Login
+                        <i class="fas fa-sign-in-alt"></i> {% trans "Login" %}
                     </a>
                 {% endif %}
             </div>

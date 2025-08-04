@@ -1,6 +1,7 @@
 {% load static %}
+{% load i18n %}
 <!doctype html>
-<html lang="en" data-bs-theme="auto">
+<html lang="{{ LANGUAGE_CODE }}" data-bs-theme="auto" dir="{% if LANGUAGE_CODE == 'fa' %}rtl{% else %}ltr{% endif %}">
   <head>
     <!-- Meta tags for charset and viewport settings -->
     <meta charset="utf-8">
@@ -41,6 +42,29 @@
         --text-muted: #6c757d;
         --success-color: #28a745;
         --danger-color: #dc3545;
+      }
+
+      /* RTL Support */
+      [dir="rtl"] {
+        text-align: right;
+      }
+      
+      [dir="rtl"] .navbar-nav {
+        padding-right: 0;
+      }
+      
+      [dir="rtl"] .me-2 {
+        margin-right: 0 !important;
+        margin-left: 0.5rem !important;
+      }
+      
+      [dir="rtl"] .me-auto {
+        margin-right: 0 !important;
+        margin-left: auto !important;
+      }
+      
+      [dir="rtl"] .dropdown-menu {
+        text-align: right;
       }
 
       body {
@@ -375,9 +399,9 @@
     {% block hero %}
     <div class="hero-section">
       <div class="container">
-        <h1 class="hero-title text-shadow">Discover Premium Quality</h1>
-        <p class="hero-subtitle text-shadow">Explore our curated collection of luxury items crafted with excellence</p>
-        <a href="{% url 'core:products_list' %}" class="btn btn-accent btn-lg">Shop Now</a>
+        <h1 class="hero-title text-shadow">{% trans "Discover Premium Quality" %}</h1>
+        <p class="hero-subtitle text-shadow">{% trans "Explore our curated collection of luxury items crafted with excellence" %}</p>
+        <a href="{% url 'core:products_list' %}" class="btn btn-accent btn-lg">{% trans "Shop Now" %}</a>
       </div>
     </div>
     {% endblock %}

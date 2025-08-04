@@ -18,6 +18,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from . import serializers
+from django.utils import translation
+from django.conf import settings
 
 mid = '40120a7a-b6e4-44cb-b9c5-2755e1cb3dab'
 #*********************************************************************************************************
@@ -199,7 +201,7 @@ class CheckoutView(LoginRequiredMixin,View):
 
 #*********************************************************************************************************
 def get_user_ip(request):
-    ip = request.META.get('HTTP_X_FORWARDED_FOR ')
+    ip = request.META.get('HTTP_X_FORWARDED_FOR')
     if not ip:
         ip = request.META.get('REMOTE_ADDR')
     return ip
@@ -241,15 +243,15 @@ class VerifyView(LoginRequiredMixin,View):
                     payment.save()
                     return render(request, 'core/payment_done.html',{'payment': payment})
                 elif code == 101:
-                    logger.error(f"Failed to pey payment: {json.load(response_data)}")
+                    logger.error(f"Failed to pay payment: {response_data}")
                     return render(request, 'core/payment_failed.html')
                 else:
-                    logger.error(f"Failed to pey payment: {json.load(response_data)}")
+                    logger.error(f"Failed to pay payment: {response_data}")
                     payment.status = models.Payment.STATUS_ERROR
                     payment.save()
                     return render(request, 'core/payment_failed.html')
             else:
-                logger.error(f"Failed to pey payment: {json.load(response_data)}")
+                logger.error(f"Failed to pay payment: {response_data}")
                 payment.status = models.Payment.STATUS_ERROR
                 payment.save()
                 return render(request, 'core/payment_failed.html')
@@ -271,7 +273,9 @@ class GetCartAPIView(APIView):
     def get(self, request,format=None):
         cart = get_cart(request)
         s = serializers.CartSerializer(data=cart)
-        return Response(s.data)
+        if s.is_valid():
+            return Response(s.data)
+        return Response({'error': 'Invalid cart data'}, status=status.HTTP_400_BAD_REQUEST)
 #*********************************************************************************************************
 class AddToCartAPIView(View):
     def post(self, request):
@@ -287,4 +291,14 @@ class AddToCartAPIView(View):
             except models.Product.DoesNotExist:
                 return Response({'error':'product not found'},status.HTTP_404_NOT_FOUND)
         return Response({'error':'bad request'},status.HTTP_400_BAD_REQUEST)
+
+
+#*********************************************************************************************************
+class LanguageSwitchView(View):
+    def post(self, request):
+        language = request.POST.get('language')
+        if language in [lang[0] for lang in settings.LANGUAGES]:
+            translation.activate(language)
+            request.session[translation.LANGUAGE_SESSION_KEY] = language
+        return redirect(request.META.get('HTTP_REFERER', '/'))
 

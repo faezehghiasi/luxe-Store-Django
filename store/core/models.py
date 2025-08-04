@@ -32,11 +32,16 @@ class Product(Base):
     price = models.IntegerField(default=0)
     discount = models.FloatField(default=0)
     enabled = models.BooleanField(default=True)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True, blank=True)
     quantity = models.IntegerField(default=0)
     description = models.TextField()
     category = models.ForeignKey('Category', on_delete=models.PROTECT, related_name='products')
     image = models.ImageField(upload_to='covers/', null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
