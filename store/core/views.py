@@ -298,7 +298,37 @@ class LanguageSwitchView(View):
     def post(self, request):
         language = request.POST.get('language')
         if language in [lang[0] for lang in settings.LANGUAGES]:
+            # Set the session language first
+            request.session['django_language'] = language
+            request.session.modified = True  # Ensure session is saved
+            
+            # Activate the translation for this request
             translation.activate(language)
-            request.session[translation.LANGUAGE_SESSION_KEY] = language
+            
+            # Set the language code for the request
+            request.LANGUAGE_CODE = language
         return redirect(request.META.get('HTTP_REFERER', '/'))
+
+class DebugLanguageView(View):
+    def get(self, request):
+        from django.utils.translation import get_language
+        # Force activate Persian to test
+        translation.activate('fa')
+        test_translation = translation.gettext('Welcome Back')
+        # Reset to current language
+        translation.activate(get_language())
+        
+        return JsonResponse({
+            'current_language': get_language(),
+            'session_language': request.session.get('django_language'),
+            'available_languages': [lang[0] for lang in settings.LANGUAGES],
+            'translation_test': test_translation,
+            'translation_working': test_translation != 'Welcome Back'
+        })
+
+class TestTranslationView(View):
+    def get(self, request):
+        # Force activate Persian
+        translation.activate('fa')
+        return render(request, 'core/test_translation.html')
 

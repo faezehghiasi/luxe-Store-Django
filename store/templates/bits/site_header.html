@@ -36,7 +36,7 @@
                 <!-- Language switcher -->
                 <div class="dropdown me-2">
                     <button class="btn btn-outline-primary dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        {% if LANGUAGE_CODE == 'fa' %}
+                        {% if LANGUAGE_CODE == 'fa' or request.session.django_language == 'fa' %}
                             <i class="fas fa-flag"></i> فارسی
                         {% else %}
                             <i class="fas fa-flag"></i> English

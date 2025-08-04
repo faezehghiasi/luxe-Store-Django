@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-04 10:58+0000\n"
+"POT-Creation-Date: 2025-08-04 13:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,88 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: account/templates/account/signup.html:5
+msgid "Sign Up"
+msgstr "ثبت نام"
+
+#: account/templates/account/signup.html:15
+msgid "Create Account"
+msgstr "ایجاد حساب"
+
+#: account/templates/account/signup.html:16
+msgid "Join the LUXE experience"
+msgstr "به تجربه LUXE بپیوندید"
+
+#: account/templates/registration/login.html:6
+#: templates/bits/site_header.html:102
+msgid "Login"
+msgstr "ورود"
+
+#: account/templates/registration/login.html:23
+msgid "Welcome Back"
+msgstr "خوش برگشتی"
+
+#: account/templates/registration/login.html:25
+msgid "Sign in to your LUXE account"
+msgstr "به حساب LUXE خود وارد شوید"
+
+#: account/templates/registration/login.html:46
+msgid "Username"
+msgstr "نام کاربری"
+
+#: account/templates/registration/login.html:70
+msgid "Password"
+msgstr "رمز عبور"
+
+#: account/templates/registration/login.html:100
+msgid "Remember me"
+msgstr "مرا به خاطر بسپار"
+
+#: account/templates/registration/login.html:103
+msgid "Forgot password?"
+msgstr "رمز عبور را فراموش کرده‌اید؟"
+
+#: account/templates/registration/login.html:108
+msgid "Sign In"
+msgstr "ورود"
+
+#: account/templates/registration/login.html:113
+msgid "Don't have an account?"
+msgstr "حساب کاربری ندارید؟"
+
+#: account/templates/registration/login.html:113
+msgid "create account"
+msgstr "ایجاد حساب"
+
+#: core/templates/core/test_translation.html:4
+msgid "Test Translation"
+msgstr "تست ترجمه"
+
+#: core/templates/core/cart.html:5 core/templates/core/cart.html:59
+msgid "Your Shopping Cart"
+msgstr "سبد خرید شما"
+
+#: core/templates/core/cart.html:5
+msgid "Luxury Store"
+msgstr "فروشگاه لوکس"
+
+#: core/templates/core/cart.html:61
+msgid "Continue Shopping"
+msgstr "ادامه خرید"
+
+#: core/templates/core/cart.html:69
+msgid "Your cart is empty"
+msgstr "سبد خرید شما خالی است"
+
+#: core/templates/core/cart.html:70
+msgid "Discover our collection and find something special"
+msgstr "مجموعه ما را کشف کنید و چیز خاصی پیدا کنید"
+
+#: core/templates/core/cart.html:72
+msgid "Start Shopping"
+msgstr "شروع خرید"
+
 #: templates/base.html:402
 msgid "Discover Premium Quality"
 msgstr "کیفیت برتر را کشف کنید"
@@ -41,30 +123,34 @@ msgstr "فروشگاه"
 msgid "About"
 msgstr "درباره ما"
 
-#: templates/bits/site_header.html:102
-msgid "Login"
+#: account/templates/account/signup.html:35
+msgid "First Name"
+msgstr "نام"
+
+#: account/templates/account/signup.html:50
+msgid "Last Name"
+msgstr "نام خانوادگی"
+
+#: account/templates/account/signup.html:70
+msgid "Phone Number"
+msgstr "شماره تلفن"
+
+#: account/templates/account/signup.html:145
+msgid "Confirm Password"
+msgstr "تأیید رمز عبور"
+
+#: account/templates/account/signup.html:155
+msgid "Minimum 8 characters with letters and numbers"
+msgstr "حداقل 8 کاراکتر با حروف و اعداد"
+
+#: account/templates/account/signup.html:165
+msgid "Passwords do not match!"
+msgstr "رمزهای عبور مطابقت ندارند!"
+
+#: account/templates/account/signup.html:175
+msgid "Already have an account?"
+msgstr "قبلاً حساب کاربری دارید؟"
+
+#: account/templates/account/signup.html:175
+msgid "Sign in"
 msgstr "ورود"
-
-#: templates/core/cart.html:6
-msgid "Your Shopping Cart"
-msgstr "سبد خرید شما"
-
-#: templates/core/cart.html:6
-msgid "Luxury Store"
-msgstr "فروشگاه لوکس"
-
-#: templates/core/cart.html:45
-msgid "Continue Shopping"
-msgstr "ادامه خرید"
-
-#: templates/core/cart.html:52
-msgid "Your cart is empty"
-msgstr "سبد خرید شما خالی است"
-
-#: templates/core/cart.html:53
-msgid "Discover our collection and find something special"
-msgstr "مجموعه ما را کشف کنید و چیز خاصی پیدا کنید"
-
-#: templates/core/cart.html:55
-msgid "Start Shopping"
-msgstr "شروع خرید"

@@ -25,4 +25,8 @@ urlpatterns = [
     
     # Language switcher
     path('language/', views.LanguageSwitchView.as_view(), name='language_switch'),
+    # Debug language view
+    path('debug/language/', views.DebugLanguageView.as_view(), name='debug_language'),
+    # Test translation view
+    path('test/translation/', views.TestTranslationView.as_view(), name='test_translation'),
 ]

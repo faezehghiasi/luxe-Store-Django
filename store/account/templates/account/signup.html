@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Sign Up | LUXE{% endblock %}
+{% block title %}{% trans "Sign Up" %} | LUXE{% endblock %}
 
 {% block content %}
 <div class="container py-5">
@@ -11,8 +12,8 @@
                 <div class="card-header bg-white py-4">
                     <div class="text-center">
                         <i class="fas fa-gem text-accent fa-3x mb-3"></i>
-                        <h2 class="h4 text-uppercase mb-0">Create Account</h2>
-                        <p class="text-muted">Join the LUXE experience</p>
+                        <h2 class="h4 text-uppercase mb-0">{% trans "Create Account" %}</h2>
+                        <p class="text-muted">{% trans "Join the LUXE experience" %}</p>
                     </div>
                 </div>
                 <div class="card-body p-5">
@@ -30,7 +31,7 @@
                         <!-- Username Field -->
                         <div class="mb-4">
                             <label for="{{ form.username.id_for_label }}" class="form-label small text-uppercase text-muted">
-                                Username <span class="text-danger">*</span>
+                                {% trans "Username" %} <span class="text-danger">*</span>
                             </label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0">
@@ -55,7 +56,7 @@
                         <!-- First Name Field -->
                         <div class="mb-4">
                             <label for="{{ form.first_name.id_for_label }}" class="form-label small text-uppercase text-muted">
-                                First Name
+                                {% trans "First Name" %}
                             </label>
                             <input type="text"
                                    class="form-control {% if form.first_name.errors %}is-invalid{% endif %}"
@@ -74,7 +75,7 @@
                         <!-- Last Name Field -->
                         <div class="mb-4">
                             <label for="{{ form.last_name.id_for_label }}" class="form-label small text-uppercase text-muted">
-                                Last Name
+                                {% trans "Last Name" %}
                             </label>
                             <input type="text"
                                    class="form-control {% if form.last_name.errors %}is-invalid{% endif %}"
@@ -93,7 +94,7 @@
                         <!-- Email Field -->
                         <div class="mb-4">
                             <label for="{{ form.email.id_for_label }}" class="form-label small text-uppercase text-muted">
-                                Email <span class="text-danger">*</span>
+                                {% trans "Email" %} <span class="text-danger">*</span>
                             </label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0">
@@ -118,7 +119,7 @@
                         <!-- Phone Number Field -->
                         <div class="mb-4">
                             <label for="{{ form.phone_number.id_for_label }}" class="form-label small text-uppercase text-muted">
-                                Phone Number <span class="text-danger">*</span>
+                                {% trans "Phone Number" %} <span class="text-danger">*</span>
                             </label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0">
@@ -143,7 +144,7 @@
                         <!-- Password Field -->
                         <div class="mb-4">
                             <label for="{{ form.password1.id_for_label }}" class="form-label small text-uppercase text-muted">
-                                Password <span class="text-danger">*</span>
+                                {% trans "Password" %} <span class="text-danger">*</span>
                             </label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0">
@@ -166,7 +167,7 @@
                                 </div>
                                 {% else %}
                                     <small class="form-text text-muted">
-                                        Minimum 8 characters with letters and numbers
+                                        {% trans "Minimum 8 characters with letters and numbers" %}
                                     </small>
                                 {% endif %}
                         </div>
@@ -174,7 +175,7 @@
                         <!-- Password Confirmation Field -->
                         <div class="mb-4">
                             <label for="{{ form.password2.id_for_label }}" class="form-label small text-uppercase text-muted">
-                                Confirm Password <span class="text-danger">*</span>
+                                {% trans "Confirm Password" %} <span class="text-danger">*</span>
                             </label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0">
@@ -200,17 +201,17 @@
 
                         <!-- Password Match Validation -->
                         <div id="password-match-error" class="alert alert-danger d-none mb-4">
-                            Passwords do not match!
+                            {% trans "Passwords do not match!" %}
                         </div>
 
                         <!-- Submit Button -->
                         <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
-                            Create Account <i class="fas fa-user-plus ms-2"></i>
+                            {% trans "Create Account" %} <i class="fas fa-user-plus ms-2"></i>
                         </button>
 
                         <!-- Login Link -->
                         <div class="text-center small text-muted">
-                            Already have an account? <a href="{% url 'login' %}" class="text-accent">Sign in</a>
+                            {% trans "Already have an account?" %} <a href="{% url 'login' %}" class="text-accent">{% trans "Sign in" %}</a>
                         </div>
                     </form>
                 </div>

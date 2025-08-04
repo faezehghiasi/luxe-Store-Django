@@ -1,8 +1,9 @@
 {% extends 'base.html' %}  {# Uses your base template for consistent layout #}
 {% load static %}  {# Loads static files like CSS and JS #}
+{% load i18n %}  {# Loads internationalization tags #}
 
 {# Sets the browser tab title #}
-{% block title %}Login | LUXE{% endblock %}
+{% block title %}{% trans "Login" %} | LUXE{% endblock %}
 
 {# Main content block that will be inserted into base.html #}
 {% block content %}
@@ -19,9 +20,9 @@
                         {# Your luxury gem icon #}
                         <i class="fas fa-gem text-accent fa-3x mb-3"></i>
                         {# Login heading #}
-                        <h2 class="h4 text-uppercase mb-0">Welcome Back</h2>
+                        <h2 class="h4 text-uppercase mb-0">{% trans "Welcome Back" %}</h2>
                         {# Subtitle text #}
-                        <p class="text-muted">Sign in to your LUXE account</p>
+                        <p class="text-muted">{% trans "Sign in to your LUXE account" %}</p>
                     </div>
                 </div>
 
@@ -42,7 +43,7 @@
 
                         {# Username input field #}
                         <div class="mb-4">
-                            <label for="{{ form.username.id_for_label }}" class="form-label small text-uppercase text-muted">Username</label>
+                            <label for="{{ form.username.id_for_label }}" class="form-label small text-uppercase text-muted">{% trans "Username" %}</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0">
                                     <i class="fas fa-user text-muted"></i>  {# User icon #}
@@ -66,7 +67,7 @@
 
                         {# Password input field #}
                         <div class="mb-4">
-                            <label for="{{ form.password.id_for_label }}" class="form-label small text-uppercase text-muted">Password</label>
+                            <label for="{{ form.password.id_for_label }}" class="form-label small text-uppercase text-muted">{% trans "Password" %}</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0">
                                     <i class="fas fa-lock text-muted"></i>  {# Lock icon #}
@@ -96,20 +97,20 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="rememberMe" name="remember">
                                 <label class="form-check-label small text-muted" for="rememberMe">
-                                    Remember me  {# Keeps user logged in #}
+                                    {% trans "Remember me" %}  {# Keeps user logged in #}
                                 </label>
                             </div>
-                            <a href="{% url 'password_reset' %}" class="small text-muted">Forgot password?</a>
+                            <a href="{% url 'password_reset' %}" class="small text-muted">{% trans "Forgot password?" %}</a>
                         </div>
 
                         {# Submit button #}
                         <button type="submit" class="btn btn-primary w-100 py-2 mb-3">
-                            Sign In <i class="fas fa-arrow-right ms-2"></i>  {# Arrow icon #}
+                            {% trans "Sign In" %} <i class="fas fa-arrow-right ms-2"></i>  {# Arrow icon #}
                         </button>
 
                         {# Registration prompt (currently links to contact) #}
                         <div class="text-center small text-muted">
-                            Don't have an account? <a href="{% url 'account:signup' %}" class="text-accent">create account</a>
+                            {% trans "Don't have an account?" %} <a href="{% url 'account:signup' %}" class="text-accent">{% trans "create account" %}</a>
                         </div>
                     </form>
                 </div>
