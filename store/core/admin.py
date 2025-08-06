@@ -3,12 +3,20 @@ from core.models import *
 
 # Register your models here.
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'price', 'discount', 'quantity', 'enabled', 'category']
+    list_display = ['name', 'price', 'discount', 'quantity', 'enabled', 'category', 'image_preview']
     list_filter = ['enabled', 'category']
     search_fields = ['name', 'description']
     list_editable = ['price', 'discount', 'quantity', 'enabled']
     prepopulated_fields = {'slug': ('name',)}
     raw_id_fields = ['category']
+    readonly_fields = ['image_preview']
+    
+    def image_preview(self, obj):
+        if obj.image:
+            return f'<img src="{obj.image.url}" width="50" height="50" style="object-fit: cover;" />'
+        return "No Image"
+    image_preview.short_description = 'Image'
+    image_preview.allow_tags = True
 
 # ****************************************************************************************************************************
 class CategoryAdmin(admin.ModelAdmin):
