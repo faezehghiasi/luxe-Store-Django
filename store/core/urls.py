@@ -10,6 +10,7 @@ app_name = 'core'
 
 urlpatterns = [
     path('',views.ListOfProductsView.as_view(),name='products_list'),
+    path('product/<slug:slug>/', views.ProductDetailView.as_view(), name='product_detail'),
     path('cart/add/<int:product_id>',views.AddToCartView.as_view(),name='cart_add'),
     path('cart/remove/<int:product_id>',views.RemoveFromView.as_view(),name='cart_remove'),
     path('cart/empty',views.EmptyCartView.as_view(),name='cart_empty'),

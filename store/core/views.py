@@ -332,3 +332,9 @@ class TestTranslationView(View):
         translation.activate('fa')
         return render(request, 'core/test_translation.html')
 
+#*********************************************************************************************************
+class ProductDetailView(View):
+    def get(self, request, slug):
+        product = get_object_or_404(Product, slug=slug, enabled=True)
+        return render(request, 'core/product_detail.html', {'product': product})
+
