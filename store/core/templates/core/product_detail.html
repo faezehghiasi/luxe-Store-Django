@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Product Image -->
+        <div class="col-md-6">
+            <div class="product-image-container-detail">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="img-fluid product-detail-image" alt="{{ product.name }}">
+                {% else %}
+                    <div class="d-flex align-items-center justify-content-center h-100 text-muted bg-light">
+                        <i class="fas fa-gem fa-6x"></i>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Product Information -->
+        <div class="col-md-6">
+            <div class="product-info">
+                <!-- Stock status badge -->
+                <div class="stock-badge-detail {% if product.quantity > 0 %}in-stock{% else %}out-of-stock{% endif %} mb-3">
+                    {% if product.quantity > 0 %}
+                        <i class="fas fa-check-circle me-2"></i> In Stock ({{ product.quantity }} available)
+                    {% else %}
+                        <i class="fas fa-times-circle me-2"></i> Out of Stock
+                    {% endif %}
+                </div>
+
+                <!-- Product name -->
+                <h1 class="product-detail-title mb-3">{{ product.name }}</h1>
+
+                <!-- Category -->
+                <div class="product-category mb-3">
+                    <span class="badge bg-secondary">{{ product.category.name }}</span>
+                </div>
+
+                <!-- Price section -->
+                <div class="price-section mb-4">
+                    {% if product.discount > 0 %}
+                        <div class="original-price">
+                            <span class="text-muted text-decoration-line-through">${{ product.price }}</span>
+                        </div>
+                        <div class="current-price">
+                            <span class="h3 text-primary">${{ product.price|floatformat:0 }}</span>
+                            <span class="badge bg-success ms-2">{{ product.discount|floatformat:0 }}% OFF</span>
+                        </div>
+                    {% else %}
+                        <div class="current-price">
+                            <span class="h3 text-primary">${{ product.price }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Description -->
+                <div class="product-description mb-4">
+                    <h5>Description</h5>
+                    <p class="text-muted">{{ product.description }}</p>
+                </div>
+
+                <!-- Product details -->
+                <div class="product-details mb-4">
+                    <h5>Product Details</h5>
+                    <ul class="list-unstyled">
+                        <li><strong>SKU:</strong> {{ product.slug|upper }}</li>
+                        <li><strong>Category:</strong> {{ product.category.name }}</li>
+                        <li><strong>Availability:</strong> 
+                            {% if product.quantity > 0 %}
+                                <span class="text-success">In Stock</span>
+                            {% else %}
+                                <span class="text-danger">Out of Stock</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="product-actions-detail">
+                    {% if product.quantity > 0 %}
+                        <a href="{% url 'core:cart_add' product.id %}" class="btn btn-primary btn-lg me-3 add-to-cart-detail">
+                            <i class="fas fa-shopping-cart me-2"></i> Add to Cart
+                        </a>
+                    {% else %}
+                        <button class="btn btn-outline-danger btn-lg me-3" disabled>
+                            <i class="fas fa-times-circle me-2"></i> Out of Stock
+                        </button>
+                    {% endif %}
+                    
+                    <a href="{% url 'core:products_list' %}" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i> Back to Products
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .product-image-container-detail {
+        height: 400px;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .product-detail-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .product-info {
+        padding: 20px;
+    }
+
+    .product-detail-title {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    .stock-badge-detail {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .stock-badge-detail.in-stock {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .stock-badge-detail.out-of-stock {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .price-section {
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        border-left: 4px solid #007bff;
+    }
+
+    .original-price {
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+    }
+
+    .current-price {
+        display: flex;
+        align-items: center;
+    }
+
+    .product-description {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #e9ecef;
+    }
+
+    .product-details {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #e9ecef;
+    }
+
+    .product-details ul li {
+        padding: 8px 0;
+        border-bottom: 1px solid #f8f9fa;
+    }
+
+    .product-details ul li:last-child {
+        border-bottom: none;
+    }
+
+    .product-actions-detail {
+        padding: 20px 0;
+    }
+
+    .btn-lg {
+        padding: 12px 24px;
+        font-size: 1.1rem;
+    }
+
+    @media (max-width: 768px) {
+        .product-image-container-detail {
+            height: 300px;
+            margin-bottom: 20px;
+        }
+        
+        .product-info {
+            padding: 10px;
+        }
+    }
+</style>
+
+<script>
+$(document).ready(function() {
+    $('.add-to-cart-detail').click(function(e) {
+        e.preventDefault();
+        var target_link = $(this).attr('href');
+
+        $.get(target_link, function(res, status, xhr) {
+            var item_count = Object.keys(res).length;
+            $('#cart_count').html(item_count);
+            
+            // Show success message
+            alert('Product added to cart successfully!');
+        });
+
+        return false;
+    });
+});
+</script>
+{% endblock %} 
