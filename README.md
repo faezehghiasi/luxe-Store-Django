@@ -119,6 +119,12 @@ The website supports multiple languages with dynamic language switching:
 - Use the language switcher in the header to test dynamic switching
 
 ## 📷 Screenshots
+<img width="1907" height="958" alt="image" src="https://github.com/user-attachments/assets/84331bc7-bc0b-4536-85db-d0bbcd6a7c8a" />
+<img width="1907" height="958" alt="image" src="https://github.com/user-attachments/assets/fc313e0f-5fc4-4f1f-8cea-c6e795ddcc7f" />
+<img width="1907" height="958" alt="image" src="https://github.com/user-attachments/assets/fc1d8aa8-06ef-450f-a4ff-2625112870f7" />
+<img width="1907" height="958" alt="image" src="https://github.com/user-attachments/assets/6eea0e5f-c5ba-4e91-85c8-8171f5683397" />
+
+
 
 
 ## 👤 Author
